@@ -1,0 +1,260 @@
+/* ============================================================
+   Colmac Manuals — stili React app
+   Palette: arancio Colmac #F5A623, grigio scuro #2D2D2D
+   ============================================================ */
+
+:root {
+  --cm-orange:       #F5A623;
+  --cm-orange-dark:  #d4891a;
+  --cm-dark:         #2D2D2D;
+  --cm-gray:         #6B7280;
+  --cm-gray-light:   #F3F4F6;
+  --cm-border:       #E5E7EB;
+  --cm-radius:       8px;
+  --cm-shadow:       0 1px 3px rgba(0,0,0,.1), 0 1px 2px rgba(0,0,0,.06);
+  --cm-shadow-md:    0 4px 6px rgba(0,0,0,.07), 0 2px 4px rgba(0,0,0,.05);
+}
+
+.cm-app {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 16px 64px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: var(--cm-dark);
+}
+
+/* ---- Search bar ---- */
+.cm-searchbar { margin-bottom: 16px; }
+.cm-searchbar__inner {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.cm-searchbar__icon {
+  position: absolute;
+  left: 14px;
+  color: var(--cm-gray);
+  display: flex;
+}
+.cm-searchbar__input {
+  width: 100%;
+  padding: 14px 44px 14px 44px;
+  font-size: 16px;
+  border: 2px solid var(--cm-border);
+  border-radius: var(--cm-radius);
+  outline: none;
+  transition: border-color .15s;
+  background: #fff;
+}
+.cm-searchbar__input:focus {
+  border-color: var(--cm-orange);
+}
+.cm-searchbar__clear {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: var(--cm-gray);
+  cursor: pointer;
+  line-height: 1;
+  padding: 4px;
+}
+
+/* ---- Filter bar ---- */
+.cm-filterbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 24px;
+  align-items: flex-end;
+}
+.cm-filter__item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 150px;
+}
+.cm-filter__label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cm-gray);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.cm-filter__select {
+  padding: 9px 12px;
+  border: 2px solid var(--cm-border);
+  border-radius: var(--cm-radius);
+  font-size: 14px;
+  background: #fff;
+  outline: none;
+  cursor: pointer;
+  transition: border-color .15s;
+}
+.cm-filter__select:focus {
+  border-color: var(--cm-orange);
+}
+.cm-filterbar__reset {
+  padding: 9px 16px;
+  background: none;
+  border: 2px solid var(--cm-border);
+  border-radius: var(--cm-radius);
+  font-size: 13px;
+  color: var(--cm-gray);
+  cursor: pointer;
+  transition: border-color .15s, color .15s;
+  white-space: nowrap;
+  align-self: flex-end;
+}
+.cm-filterbar__reset:hover {
+  border-color: var(--cm-orange);
+  color: var(--cm-orange-dark);
+}
+
+/* ---- Results grid ---- */
+.cm-results {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ---- Card ---- */
+.cm-card {
+  border: 2px solid var(--cm-border);
+  border-radius: var(--cm-radius);
+  background: #fff;
+  box-shadow: var(--cm-shadow);
+  transition: border-color .15s, box-shadow .15s;
+  overflow: hidden;
+}
+.cm-card--open,
+.cm-card:hover {
+  border-color: var(--cm-orange);
+  box-shadow: var(--cm-shadow-md);
+}
+.cm-card__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+  user-select: none;
+}
+.cm-card__meta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.cm-card__model-id {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: .02em;
+  color: var(--cm-dark);
+}
+.cm-card__nome {
+  font-size: 13px;
+  color: var(--cm-gray);
+}
+.cm-card__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.cm-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 100px;
+  white-space: nowrap;
+}
+.cm-badge--linea    { background: #FEF3C7; color: #92400E; }
+.cm-badge--tipo     { background: #EDE9FE; color: #5B21B6; }
+.cm-badge--count    { background: var(--cm-gray-light); color: var(--cm-gray); }
+
+.cm-card__toggle {
+  background: none;
+  border: none;
+  padding: 4px;
+  color: var(--cm-gray);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: color .15s;
+}
+.cm-card--open .cm-card__toggle { color: var(--cm-orange-dark); }
+
+/* ---- Card body ---- */
+.cm-card__body {
+  padding: 0 16px 16px;
+  border-top: 1px solid var(--cm-border);
+  margin-top: -1px;
+}
+.cm-doc-group { margin-top: 14px; }
+.cm-doc-group__title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--cm-gray);
+  margin: 0 0 8px;
+}
+.cm-doc-group__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.cm-doc-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  background: var(--cm-gray-light);
+  border: 1px solid var(--cm-border);
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cm-dark);
+  text-decoration: none;
+  transition: background .15s, border-color .15s;
+}
+.cm-doc-link:hover {
+  background: #FEF3C7;
+  border-color: var(--cm-orange);
+}
+.cm-doc-link__filename {
+  font-weight: 400;
+  font-size: 11px;
+  color: var(--cm-gray);
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---- Empty state ---- */
+.cm-empty {
+  text-align: center;
+  padding: 56px 24px;
+  color: var(--cm-gray);
+}
+.cm-empty svg { margin: 0 auto 16px; opacity: .4; }
+.cm-empty__title { font-size: 16px; margin: 0 0 8px; }
+.cm-empty__hint  { font-size: 14px; margin: 0; }
+
+/* ---- Error ---- */
+.cm-error {
+  padding: 12px 16px;
+  background: #FEE2E2;
+  color: #991B1B;
+  border-radius: var(--cm-radius);
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 600px) {
+  .cm-filter__item { min-width: calc(50% - 5px); }
+  .cm-card__badges { display: none; }
+}
