@@ -18,10 +18,12 @@ require_once COLMAC_MANUALS_DIR . 'includes/class-cpt.php';
 require_once COLMAC_MANUALS_DIR . 'includes/class-metabox.php';
 require_once COLMAC_MANUALS_DIR . 'includes/class-rest-api.php';
 require_once COLMAC_MANUALS_DIR . 'includes/class-shortcode.php';
+require_once COLMAC_MANUALS_DIR . 'includes/class-importer.php';
 
 add_action( 'plugins_loaded', function () {
     Colmac_CPT::init();
     Colmac_Metabox::init();
     Colmac_REST_API::init();
     Colmac_Shortcode::init();
+    Colmac_Importer::init();
 } );

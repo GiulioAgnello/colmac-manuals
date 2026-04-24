@@ -53,6 +53,18 @@ class Colmac_Shortcode {
             ? filemtime( $asset_file )
             : COLMAC_MANUALS_VERSION;
 
+        // CSS
+        $css_file = COLMAC_MANUALS_DIR . 'dist/main.css';
+        if ( file_exists( $css_file ) ) {
+            wp_enqueue_style(
+                'colmac-manuali-style',
+                COLMAC_MANUALS_URL . 'dist/main.css',
+                [],
+                filemtime( $css_file )
+            );
+        }
+
+        // JS
         wp_enqueue_script(
             'colmac-manuali-app',
             COLMAC_MANUALS_URL . 'dist/app.js',
