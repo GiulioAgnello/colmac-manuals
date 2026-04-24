@@ -27,3 +27,17 @@ add_action( 'plugins_loaded', function () {
     Colmac_Shortcode::init();
     Colmac_Importer::init();
 } );
+
+// Usa il template custom su qualsiasi pagina che contiene lo shortcode [colmac_manuali]
+add_filter( 'template_include', function( $template ) {
+    if ( ! is_page() ) return $template;
+
+    $post = get_post();
+    if ( $post && has_shortcode( $post->post_content, 'colmac_manuali' ) ) {
+        $plugin_template = COLMAC_MANUALS_DIR . 'templates/colmac-app.php';
+        if ( file_exists( $plugin_template ) ) {
+            return $plugin_template;
+        }
+    }
+    return $template;
+} );
