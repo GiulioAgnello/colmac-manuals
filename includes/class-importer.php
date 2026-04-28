@@ -22,11 +22,25 @@ defined( 'ABSPATH' ) || exit;
 class Colmac_Importer {
 
     // Mappa prefisso model_id → [ linea, tipo_macchina ]
+    // Brand reali verificati su colmac-italia.com (aprile 2026)
     const LINEA_MAP = [
-        'BETOMIX'    => [ 'BETOMix',    'Betoniera' ],
-        'COMPACTMIX' => [ 'CompactMix', 'Betoniera' ],
-        'PROMIX'     => [ 'ProMix',     'Mescolatore Planetario' ],
-        'ULTRAMIX'   => [ 'UltraMix',   'Mescolatore Continuo' ],
+        // Motocarriole — linea TUCANO
+        'TUCANO'     => [ 'Tucano',     'Motocarriole' ],
+        // Mini Dumper — linea PELLICANO
+        'PELLICANO'  => [ 'Pellicano',  'Mini Dumper' ],
+        // Miniescavatori — linea AIRONE
+        'AIRONE'     => [ 'Airone',     'Miniescavatori' ],
+        // Minipale — linea CONDOR
+        'CONDOR'     => [ 'Condor',     'Minipale' ],
+        // Betoniere — linee BETOMIX, COMPACTMIX, HOBBYMIX
+        'BETOMIX'    => [ 'BetoMix',    'Betoniere' ],
+        'COMPACTMIX' => [ 'CompactMix', 'Betoniere' ],
+        'HOBBYMIX'   => [ 'HobbyMix',   'Betoniere' ],
+        // Mescolatori — linee PROMIX, ULTRAMIX
+        'PROMIX'     => [ 'ProMix',     'Mescolatori' ],
+        'ULTRAMIX'   => [ 'UltraMix',   'Mescolatori' ],
+        // Martelli demolitori — linea MAGNITUDO
+        'MAGNITUDO'  => [ 'Magnitudo',  'Martelli' ],
     ];
 
     const TIPO_LABELS = [

@@ -23,21 +23,19 @@ export default function SearchPage({ apiUrl }) {
   const fetchManuali = useCallback(async () => {
     setLoading(true)
     setError(null)
-
     const params = new URLSearchParams()
     if (query)        params.set('q',             query)
     if (linea)        params.set('linea',         linea)
     if (tipoMacchina) params.set('tipo_macchina', tipoMacchina)
     if (tipoDoc)      params.set('tipo_doc',      tipoDoc)
     if (lang)         params.set('lang',          lang)
-
     try {
       const res  = await fetch(`${apiUrl}?${params.toString()}`)
-      if (!res.ok) throw new Error(`Errore ${res.status}`)
+      if (!res.ok) throw new Error()
       const data = await res.json()
       setResults(data)
       setSearched(true)
-    } catch (err) {
+    } catch {
       setError('Impossibile caricare i risultati. Riprova più tardi.')
     } finally {
       setLoading(false)
@@ -45,12 +43,13 @@ export default function SearchPage({ apiUrl }) {
   }, [apiUrl, query, linea, tipoMacchina, tipoDoc, lang])
 
   useEffect(() => {
-    const timer = setTimeout(fetchManuali, query ? DEBOUNCE_MS : 0)
-    return () => clearTimeout(timer)
+    const t = setTimeout(fetchManuali, query ? DEBOUNCE_MS : 0)
+    return () => clearTimeout(t)
   }, [fetchManuali])
 
   return (
     <>
+      {/* Header */}
       <header className="cm-header">
         <img
           src={window.colmacData?.logoUrl || ''}
@@ -58,53 +57,69 @@ export default function SearchPage({ apiUrl }) {
           className="cm-header__logo"
           onError={e => e.target.style.display = 'none'}
         />
-        <div>
-          <h1 className="cm-header__title">Documentazione tecnica</h1>
-          <p className="cm-header__sub">Cerca il tuo modello per trovare manuali, libretti e schede tecniche</p>
+        <div className="cm-header__right">
+          <p className="cm-header__title">Documentazione Tecnica</p>
+          <p className="cm-header__sub">Manuali · Libretti · Schede tecniche</p>
         </div>
       </header>
 
-      <SearchBar value={query} onChange={setQuery} loading={loading} />
+      <div className="cm-main">
 
-      <FilterBar
-        linea={linea}            onLineaChange={setLinea}
-        tipoMacchina={tipoMacchina} onTipoMacchinaChange={setTipoMacchina}
-        tipoDoc={tipoDoc}        onTipoDocChange={setTipoDoc}
-        lang={lang}              onLangChange={setLang}
-      />
+        {/* Hero search */}
+        <div className="cm-hero">
+          <h1 className="cm-hero__title">Trova il tuo modello</h1>
+          <p className="cm-hero__sub">Inserisci il codice del tuo macchinario per trovare i documenti disponibili</p>
 
-      {error && <p className="cm-error">{error}</p>}
+          <SearchBar value={query} onChange={setQuery} loading={loading} />
 
-      {!loading && searched && results.length === 0 && !error && (
-        <EmptyState query={query} />
-      )}
-
-      {results.length > 0 && (
-        <div className="cm-results">
-          {results.map(item => (
-            <div
-              key={item.id}
-              className="cm-result-row"
-              onClick={() => navigate(`/m/${item.model_id}`)}
-            >
-              <div className="cm-result-row__info">
-                <span className="cm-result-row__model">{item.model_id}</span>
-                <span className="cm-result-row__name">{item.nome}</span>
-              </div>
-              <div className="cm-result-row__badges">
-                {item.linea         && <span className="cm-badge cm-badge--linea">{item.linea}</span>}
-                {item.tipo_macchina && <span className="cm-badge cm-badge--tipo">{item.tipo_macchina}</span>}
-                <span className="cm-badge cm-badge--count">
-                  {item.documenti?.length || 0} {item.documenti?.length === 1 ? 'documento' : 'documenti'}
-                </span>
-              </div>
-              <svg className="cm-result-row__arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <polyline points="9 18 15 12 9 6"/>
-              </svg>
-            </div>
-          ))}
+          <FilterBar
+            linea={linea}            onLineaChange={setLinea}
+            tipoMacchina={tipoMacchina} onTipoMacchinaChange={setTipoMacchina}
+            tipoDoc={tipoDoc}        onTipoDocChange={setTipoDoc}
+            lang={lang}              onLangChange={setLang}
+          />
         </div>
-      )}
+
+        {error && <p className="cm-error">{error}</p>}
+
+        {!loading && searched && results.length === 0 && !error && (
+          <EmptyState query={query} />
+        )}
+
+        {results.length > 0 && (
+          <div className="cm-results-wrap">
+            <div className="cm-results-count">
+              {results.length} {results.length === 1 ? 'modello trovato' : 'modelli trovati'}
+            </div>
+            <div className="cm-results">
+              {results.map(item => (
+                <div
+                  key={item.id}
+                  className="cm-result-row"
+                  onClick={() => navigate(`/m/${item.model_id}`)}
+                >
+                  <div className="cm-result-row__stripe" />
+                  <div className="cm-result-row__info">
+                    <span className="cm-result-row__model">{item.model_id}</span>
+                    <span className="cm-result-row__name">{item.nome}</span>
+                  </div>
+                  <div className="cm-result-row__badges">
+                    {item.linea         && <span className="cm-badge cm-badge--linea">{item.linea}</span>}
+                    {item.tipo_macchina && <span className="cm-badge cm-badge--tipo">{item.tipo_macchina}</span>}
+                    <span className="cm-badge cm-badge--count">
+                      {item.documenti?.length || 0} {item.documenti?.length === 1 ? 'doc' : 'doc'}
+                    </span>
+                  </div>
+                  <svg className="cm-result-row__arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <polyline points="9 18 15 12 9 6"/>
+                  </svg>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+      </div>
     </>
   )
 }

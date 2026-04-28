@@ -1,19 +1,14 @@
 import React from 'react'
 
-const LINEE = [
-  { value: '',            label: 'Tutte le linee' },
-  { value: 'betomix',     label: 'BETOMix' },
-  { value: 'compactmix',  label: 'CompactMix' },
-  { value: 'promix',      label: 'ProMix' },
-  { value: 'ultramix',    label: 'UltraMix' },
-]
-
 const TIPI_MACCHINA = [
-  { value: '',                      label: 'Tutti i tipi' },
-  { value: 'betoniera',             label: 'Betoniera' },
-  { value: 'mescolatore-planetario', label: 'Mescolatore Planetario' },
-  { value: 'mescolatore-continuo',  label: 'Mescolatore Continuo' },
-  { value: 'frattazzatrice',        label: 'Frattazzatrice' },
+  { value: '',               label: 'Tutte le categorie' },
+  { value: 'Motocarriole',   label: 'Motocarriole' },
+  { value: 'Mini Dumper',    label: 'Mini Dumper' },
+  { value: 'Miniescavatori', label: 'Miniescavatori' },
+  { value: 'Minipale',       label: 'Minipale' },
+  { value: 'Betoniere',      label: 'Betoniere' },
+  { value: 'Mescolatori',    label: 'Mescolatori' },
+  { value: 'Martelli',       label: 'Martelli' },
 ]
 
 const TIPI_DOC = [
@@ -39,44 +34,33 @@ function Select({ value, onChange, options, label }) {
   return (
     <label className="cm-filter__item">
       <span className="cm-filter__label">{label}</span>
-      <select
-        className="cm-filter__select"
-        value={value}
-        onChange={e => onChange(e.target.value)}
-      >
-        {options.map(o => (
-          <option key={o.value} value={o.value}>{o.label}</option>
-        ))}
+      <select className="cm-filter__select" value={value} onChange={e => onChange(e.target.value)}>
+        {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
       </select>
     </label>
   )
 }
 
 export default function FilterBar({
-  linea, onLineaChange,
   tipoMacchina, onTipoMacchinaChange,
-  tipoDoc, onTipoDocChange,
-  lang, onLangChange,
+  tipoDoc,      onTipoDocChange,
+  lang,         onLangChange,
+  linea,        onLineaChange,
 }) {
-  const hasFilters = linea || tipoMacchina || tipoDoc || lang
+  const hasFilters = tipoMacchina || tipoDoc || lang
 
   return (
     <div className="cm-filterbar">
-      <Select label="Linea"         value={linea}        onChange={onLineaChange}        options={LINEE} />
-      <Select label="Tipo macchina" value={tipoMacchina} onChange={onTipoMacchinaChange} options={TIPI_MACCHINA} />
-      <Select label="Documento"     value={tipoDoc}      onChange={onTipoDocChange}      options={TIPI_DOC} />
-      <Select label="Lingua"        value={lang}         onChange={onLangChange}         options={LINGUE} />
+      <Select label="Categoria"   value={tipoMacchina} onChange={onTipoMacchinaChange} options={TIPI_MACCHINA} />
+      <Select label="Documento"   value={tipoDoc}      onChange={onTipoDocChange}      options={TIPI_DOC} />
+      <Select label="Lingua"      value={lang}         onChange={onLangChange}         options={LINGUE} />
       {hasFilters && (
-        <button
-          className="cm-filterbar__reset"
-          onClick={() => {
-            onLineaChange('')
-            onTipoMacchinaChange('')
-            onTipoDocChange('')
-            onLangChange('')
-          }}
-        >
-          Azzera filtri
+        <button className="cm-filterbar__reset" onClick={() => {
+          onTipoMacchinaChange('')
+          onTipoDocChange('')
+          onLangChange('')
+        }}>
+          ✕ Reset
         </button>
       )}
     </div>

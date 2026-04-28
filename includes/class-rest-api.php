@@ -109,14 +109,14 @@ class Colmac_REST_API {
         if ( ! empty( $linea ) ) {
             $tax_query[] = [
                 'taxonomy' => 'colmac_linea',
-                'field'    => 'slug',
+                'field'    => 'name',
                 'terms'    => $linea,
             ];
         }
         if ( ! empty( $tipo_macchina ) ) {
             $tax_query[] = [
                 'taxonomy' => 'colmac_tipo_macchina',
-                'field'    => 'slug',
+                'field'    => 'name',
                 'terms'    => $tipo_macchina,
             ];
         }

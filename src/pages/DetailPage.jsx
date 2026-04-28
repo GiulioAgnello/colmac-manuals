@@ -77,7 +77,22 @@ export default function DetailPage({ apiUrl }) {
   const grouped = groupByTipo(manuale.documenti || [])
 
   return (
-    <div className="cm-detail">
+    <div className="cm-app">
+      <header className="cm-header">
+        <img
+          src={window.colmacData?.logoUrl || ''}
+          alt="Colmac Italia"
+          className="cm-header__logo"
+          onError={e => e.target.style.display = 'none'}
+        />
+        <div className="cm-header__right">
+          <p className="cm-header__title">Documentazione Tecnica</p>
+          <p className="cm-header__sub">Manuali · Libretti · Schede tecniche</p>
+        </div>
+      </header>
+
+      <div className="cm-main">
+      <div className="cm-detail">
 
       {/* Back */}
       <button className="cm-btn-back" onClick={() => navigate('/')}>
@@ -141,6 +156,8 @@ export default function DetailPage({ apiUrl }) {
           ))}
         </div>
       )}
+      </div>
+      </div>
     </div>
   )
 }
