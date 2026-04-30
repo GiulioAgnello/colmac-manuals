@@ -141,12 +141,9 @@ class Colmac_Metabox {
         $pdf_name = $doc['pdf_name'] ?? '';
 
         $tipi = [
-            ''                    => '— Tipo documento —',
-            'libretto_assistenza' => 'Libretto Assistenza',
-            'catalogo'            => 'Catalogo',
-            'esploso'             => 'Esploso',
-            'dichiarazione_ce'    => 'Dichiarazione CE',
-            'scheda_tecnica'      => 'Scheda Tecnica',
+            ''        => '— Tipo documento —',
+            'manuale' => 'Manuale d\'uso e manutenzione',
+            'esploso' => 'Esploso',
         ];
         $lingue = [
             ''   => '— Lingua —',

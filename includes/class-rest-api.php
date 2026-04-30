@@ -10,7 +10,7 @@ defined( 'ABSPATH' ) || exit;
  *   q            — ricerca libera su model_id o nome_modello
  *   linea        — slug tassonomia colmac_linea       (es. "betomix")
  *   tipo_macchina— slug tassonomia colmac_tipo_macchina (es. "betoniera")
- *   tipo_doc     — filtra documenti per tipo           (es. "catalogo")
+ *   tipo_doc     — filtra documenti per tipo           (es. "manuale", "esploso")
  *   lang         — filtra documenti per lingua         (es. "it")
  *
  * Risposta (array JSON):
@@ -163,7 +163,9 @@ class Colmac_REST_API {
         foreach ( $raw_docs as $doc ) {
             $doc_tipo  = $doc['tipo']   ?? '';
             $doc_lingua = $doc['lingua'] ?? '';
-            $pdf_url   = $doc['pdf_url'] ?? '';
+            $pdf_url   = ! empty( $doc['pdf_id'] )
+                ? wp_get_attachment_url( (int) $doc['pdf_id'] )
+                : ( $doc['pdf_url'] ?? '' );
 
             if ( ! empty( $tipo_doc ) && $doc_tipo !== $tipo_doc ) continue;
             if ( ! empty( $lang )     && $doc_lingua !== $lang )   continue;

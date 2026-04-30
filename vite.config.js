@@ -24,7 +24,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/wp-json': {
-        target: 'http://localhost:8080',  // cambia con il tuo WP locale
+        target: 'http://colmac-docs.local',
         changeOrigin: true,
       },
     },
