@@ -6,6 +6,31 @@ import EmptyState from '../components/EmptyState'
 
 const DEBOUNCE_MS = 350
 
+function DocTypeIcon({ tipo }) {
+  if (tipo === 'esploso') {
+    return (
+      <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="12" y="8"  width="40" height="6"  rx="2" fill="#F5A623" opacity="0.9"/>
+        <rect x="12" y="20" width="40" height="6"  rx="2" fill="#F5A623" opacity="0.6"/>
+        <rect x="12" y="32" width="40" height="6"  rx="2" fill="#F5A623" opacity="0.4"/>
+        <rect x="12" y="44" width="40" height="6"  rx="2" fill="#F5A623" opacity="0.2"/>
+        <line x1="32" y1="4" x2="32" y2="60" stroke="#F5A623" strokeWidth="1.5" strokeDasharray="3 3" opacity="0.4"/>
+      </svg>
+    )
+  }
+  // default: manuale / montaggio
+  return (
+    <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="6" width="44" height="52" rx="3" fill="#f0f0f0" stroke="#ddd" strokeWidth="1.5"/>
+      <rect x="10" y="6" width="8"  height="52" rx="3" fill="#F5A623" opacity="0.8"/>
+      <line x1="24" y1="18" x2="48" y2="18" stroke="#ccc" strokeWidth="2" strokeLinecap="round"/>
+      <line x1="24" y1="26" x2="48" y2="26" stroke="#ccc" strokeWidth="2" strokeLinecap="round"/>
+      <line x1="24" y1="34" x2="48" y2="34" stroke="#ccc" strokeWidth="2" strokeLinecap="round"/>
+      <line x1="24" y1="42" x2="40" y2="42" stroke="#ccc" strokeWidth="2" strokeLinecap="round"/>
+    </svg>
+  )
+}
+
 export default function SearchPage({ apiUrl }) {
   const navigate = useNavigate()
 
@@ -98,16 +123,9 @@ export default function SearchPage({ apiUrl }) {
                   className="cm-result-card"
                   onClick={() => navigate(`/m/${item.model_id}`)}
                 >
-                  {item.documenti?.[0]?.thumbnail_url && (
-                    <div className="cm-result-card__thumb-wrap">
-                      <img
-                        className="cm-result-card__thumb"
-                        src={item.documenti[0].thumbnail_url}
-                        alt=""
-                        loading="lazy"
-                      />
-                    </div>
-                  )}
+                  <div className="cm-result-card__icon-wrap">
+                    <DocTypeIcon tipo={item.documenti?.[0]?.tipo} />
+                  </div>
                   <div className="cm-result-card__top">
                     <span className="cm-result-card__model">{item.model_id}</span>
                     <svg className="cm-result-card__arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
