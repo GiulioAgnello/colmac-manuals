@@ -95,24 +95,33 @@ export default function SearchPage({ apiUrl }) {
               {results.map(item => (
                 <div
                   key={item.id}
-                  className="cm-result-row"
+                  className="cm-result-card"
                   onClick={() => navigate(`/m/${item.model_id}`)}
                 >
-                  <div className="cm-result-row__stripe" />
-                  <div className="cm-result-row__info">
-                    <span className="cm-result-row__model">{item.model_id}</span>
-                    <span className="cm-result-row__name">{item.nome}</span>
+                  {item.documenti?.[0]?.thumbnail_url && (
+                    <div className="cm-result-card__thumb-wrap">
+                      <img
+                        className="cm-result-card__thumb"
+                        src={item.documenti[0].thumbnail_url}
+                        alt=""
+                        loading="lazy"
+                      />
+                    </div>
+                  )}
+                  <div className="cm-result-card__top">
+                    <span className="cm-result-card__model">{item.model_id}</span>
+                    <svg className="cm-result-card__arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <polyline points="9 18 15 12 9 6"/>
+                    </svg>
                   </div>
-                  <div className="cm-result-row__badges">
+                  <span className="cm-result-card__name">{item.nome}</span>
+                  <div className="cm-result-card__badges">
                     {item.linea         && <span className="cm-badge cm-badge--linea">{item.linea}</span>}
                     {item.tipo_macchina && <span className="cm-badge cm-badge--tipo">{item.tipo_macchina}</span>}
                     <span className="cm-badge cm-badge--count">
-                      {item.documenti?.length || 0} {item.documenti?.length === 1 ? 'doc' : 'doc'}
+                      {item.documenti?.length || 0} doc
                     </span>
                   </div>
-                  <svg className="cm-result-row__arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <polyline points="9 18 15 12 9 6"/>
-                  </svg>
                 </div>
               ))}
             </div>

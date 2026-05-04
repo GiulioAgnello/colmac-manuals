@@ -171,10 +171,13 @@ class Colmac_REST_API {
             if ( ! empty( $lang )     && $doc_lingua !== $lang )   continue;
 
             $documenti[] = [
-                'tipo'     => $doc_tipo,
-                'lingua'   => $doc_lingua,
-                'url'      => $pdf_url,
-                'filename' => $doc['pdf_name'] ?? basename( $pdf_url ),
+                'tipo'          => $doc_tipo,
+                'lingua'        => $doc_lingua,
+                'url'           => $pdf_url,
+                'filename'      => $doc['pdf_name'] ?? basename( $pdf_url ),
+                'thumbnail_url' => ! empty( $doc['pdf_id'] )
+                                    ? wp_get_attachment_image_url( (int) $doc['pdf_id'], 'medium' )
+                                    : false,
             ];
         }
 
