@@ -5,12 +5,7 @@ import EmptyState from "../components/EmptyState";
 
 const DEBOUNCE_MS = 350;
 
-const MACRO_LINES = [
-  { id: "tucano", label: "Tucano", linea: "tucano", image: null },
-  { id: "pellicano", label: "Pellicano", linea: "pellicano", image: null },
-  { id: "betomix", label: "BetoMix", linea: "betomix", image: null },
-  { id: "airone", label: "Airone", linea: "airone", image: null },
-];
+// Le linee vengono caricate dinamicamente da WP — vedi useEffect più sotto
 
 const LANGS = [
   { code: "it", label: "Italiano", flag: "🇮🇹" },
@@ -137,9 +132,30 @@ export default function SearchPage({ apiUrl }) {
   const navigate = useNavigate();
 
   // Wizard
-  const [step, setStep] = useState("home"); // home | lang | results | search
+  const [step,          setStep]          = useState("home");
   const [selectedLinea, setSelectedLinea] = useState(null);
-  const [selectedLang, setSelectedLang] = useState(null);
+  const [selectedLang,  setSelectedLang]  = useState(null);
+
+  // Linee dinamiche da WP
+  const [lines,        setLines]        = useState([]);
+  const [linesLoading, setLinesLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/wp-json/wp/v2/colmac_linea?per_page=20&orderby=name&order=asc")
+      .then((r) => r.json())
+      .then((data) => {
+        setLines(
+          data.map((t) => ({
+            id:    t.slug,
+            label: t.name,
+            linea: t.slug,
+            image: t.meta?.colmac_linea_image || null,
+          }))
+        );
+      })
+      .catch(() => {})
+      .finally(() => setLinesLoading(false));
+  }, []);
 
   // Search libera
   const [query, setQuery] = useState("");
@@ -215,7 +231,7 @@ export default function SearchPage({ apiUrl }) {
     }
   };
 
-  const selectedLineaObj = MACRO_LINES.find((l) => l.linea === selectedLinea);
+  const selectedLineaObj = lines.find((l) => l.linea === selectedLinea);
   const selectedLangObj = LANGS.find((l) => l.code === selectedLang);
 
   return (
@@ -256,7 +272,10 @@ export default function SearchPage({ apiUrl }) {
           <div className="cm-lines-wrap">
             <p className="cm-lines-label">Oppure scegli la tua linea</p>
             <div className="cm-lines-grid">
-              {MACRO_LINES.map((line) => (
+              {linesLoading
+                ? <p style={{color:'#aaa',fontSize:'13px'}}>Caricamento linee…</p>
+                : null}
+              {lines.map((line) => (
                 <button
                   key={line.id}
                   className="cm-line-tile"

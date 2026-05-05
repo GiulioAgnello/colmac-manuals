@@ -19,6 +19,7 @@ require_once COLMAC_MANUALS_DIR . 'includes/class-metabox.php';
 require_once COLMAC_MANUALS_DIR . 'includes/class-rest-api.php';
 require_once COLMAC_MANUALS_DIR . 'includes/class-shortcode.php';
 require_once COLMAC_MANUALS_DIR . 'includes/class-importer.php';
+require_once COLMAC_MANUALS_DIR . 'includes/class-linea-meta.php';
 
 add_action( 'plugins_loaded', function () {
     Colmac_CPT::init();
@@ -26,6 +27,7 @@ add_action( 'plugins_loaded', function () {
     Colmac_REST_API::init();
     Colmac_Shortcode::init();
     Colmac_Importer::init();
+    Colmac_Linea_Meta::init();
 } );
 
 // Usa il template custom su qualsiasi pagina che contiene lo shortcode [colmac_manuali]
