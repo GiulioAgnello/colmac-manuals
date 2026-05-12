@@ -81,6 +81,29 @@ export default function DetailPage({ apiUrl }) {
         </div>
       </header>
 
+      {/* Banner modello — identico al cm-linea-banner */}
+      {!loading && manuale && (
+        <div className="cm-linea-banner">
+          <button className="cm-linea-banner__back" onClick={() => navigate(-1)} aria-label="Indietro">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+          </button>
+          <div className="cm-linea-banner__info">
+            <span className="cm-linea-banner__eyebrow">Modello</span>
+            <span className="cm-linea-banner__name">{manuale.model_id}</span>
+          </div>
+          <div className="cm-linea-banner__badges">
+            {manuale.linea && (
+              <span className="cm-badge cm-badge--linea">{manuale.linea}</span>
+            )}
+            {manuale.tipo_macchina && (
+              <span className="cm-badge cm-badge--tipo">{manuale.tipo_macchina}</span>
+            )}
+          </div>
+        </div>
+      )}
+
       <div className="cm-main">
 
         {loading && (
@@ -103,29 +126,6 @@ export default function DetailPage({ apiUrl }) {
 
         {!loading && manuale && (
           <>
-            <div className="cm-step-nav">
-              <button className="cm-btn-back" onClick={() => navigate(-1)}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <polyline points="15 18 9 12 15 6" />
-                </svg>
-                Indietro
-              </button>
-            </div>
-
-            <div className="cm-detail__header">
-              <div>
-                <h1 className="cm-detail__name">{manuale.nome}</h1>
-                <code className="cm-detail__model-id">{manuale.model_id}</code>
-              </div>
-              <div className="cm-detail__badges">
-                {manuale.linea && (
-                  <span className="cm-badge cm-badge--linea">{manuale.linea}</span>
-                )}
-                {manuale.tipo_macchina && (
-                  <span className="cm-badge cm-badge--tipo">{manuale.tipo_macchina}</span>
-                )}
-              </div>
-            </div>
 
             {(!manuale.documenti || manuale.documenti.length === 0) ? (
               <p className="cm-detail__empty">Nessun documento disponibile.</p>

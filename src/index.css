@@ -360,6 +360,13 @@
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
+.cm-linea-banner__badges {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  margin-left: auto;
+}
 .cm-linea-banner__lang {
   display: flex;
   align-items: center;
