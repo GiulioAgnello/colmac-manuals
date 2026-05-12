@@ -322,8 +322,8 @@
 }
 
 .cm-linea-banner__img-wrap {
-  width: 78px;
-  height: 48px;
+  width: clamp(80px, 10vw, 160px);
+  height: clamp(50px, 6vw, 100px);
   border-radius: 4px;
   overflow: hidden;
   flex-shrink: 0;
@@ -821,10 +821,6 @@
   .cm-linea-banner {
     padding: 8px 12px;
     gap: 8px;
-  }
-  .cm-linea-banner__img-wrap {
-    width: 48px;
-    height: 32px;
   }
   .cm-linea-banner__badges {
     display: none;
