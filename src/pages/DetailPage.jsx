@@ -2,29 +2,39 @@ import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 
 const TIPO_LABEL = {
-  libretto_assistenza: 'Libretto Assistenza',
-  catalogo:            'Catalogo',
-  esploso:             'Esploso',
-  dichiarazione_ce:    'Dichiarazione CE',
-  scheda_tecnica:      'Scheda Tecnica',
+  manuale: 'Manuale d\'uso',
+  esploso: 'Esploso',
 }
 
-const LINGUA_LABEL = {
-  it: '🇮🇹 Italiano',
-  en: '🇬🇧 English',
-  fr: '🇫🇷 Français',
-  de: '🇩🇪 Deutsch',
-  es: '🇪🇸 Español',
-  pt: '🇵🇹 Português',
+const LINGUA_INFO = {
+  it: { flag: '🇮🇹', label: 'Italiano' },
+  en: { flag: '🇬🇧', label: 'English' },
+  fr: { flag: '🇫🇷', label: 'Français' },
+  es: { flag: '🇪🇸', label: 'Español' },
 }
 
-function groupByTipo(documenti) {
-  return documenti.reduce((acc, doc) => {
-    const k = doc.tipo || 'altro'
-    if (!acc[k]) acc[k] = []
-    acc[k].push(doc)
-    return acc
-  }, {})
+function DocTypeIcon({ tipo }) {
+  if (tipo === 'esploso') {
+    return (
+      <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="12" y="8"  width="40" height="6" rx="2" fill="#F5A623" opacity="0.9" />
+        <rect x="12" y="20" width="40" height="6" rx="2" fill="#F5A623" opacity="0.6" />
+        <rect x="12" y="32" width="40" height="6" rx="2" fill="#F5A623" opacity="0.4" />
+        <rect x="12" y="44" width="40" height="6" rx="2" fill="#F5A623" opacity="0.2" />
+        <line x1="32" y1="4" x2="32" y2="60" stroke="#F5A623" strokeWidth="1.5" strokeDasharray="3 3" opacity="0.4" />
+      </svg>
+    )
+  }
+  return (
+    <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="6" width="44" height="52" rx="3" fill="#f0f0f0" stroke="#ddd" strokeWidth="1.5" />
+      <rect x="10" y="6" width="8"  height="52" rx="3" fill="#F5A623" opacity="0.8" />
+      <line x1="24" y1="18" x2="48" y2="18" stroke="#ccc" strokeWidth="2" strokeLinecap="round" />
+      <line x1="24" y1="26" x2="48" y2="26" stroke="#ccc" strokeWidth="2" strokeLinecap="round" />
+      <line x1="24" y1="34" x2="48" y2="34" stroke="#ccc" strokeWidth="2" strokeLinecap="round" />
+      <line x1="24" y1="42" x2="40" y2="42" stroke="#ccc" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  )
 }
 
 export default function DetailPage({ apiUrl }) {
@@ -36,13 +46,12 @@ export default function DetailPage({ apiUrl }) {
   const [error,   setError]   = useState(null)
 
   useEffect(() => {
-    const fetch_ = async () => {
+    const doFetch = async () => {
       setLoading(true)
       try {
         const res  = await fetch(`${apiUrl}?q=${encodeURIComponent(modelId)}&per_page=1`)
         if (!res.ok) throw new Error()
         const data = await res.json()
-        // Trova corrispondenza esatta per model_id
         const found = data.find(m => m.model_id === modelId)
         if (!found) throw new Error('not_found')
         setManuale(found)
@@ -55,35 +64,18 @@ export default function DetailPage({ apiUrl }) {
         setLoading(false)
       }
     }
-    fetch_()
+    doFetch()
   }, [apiUrl, modelId])
 
-  if (loading) return (
-    <div className="cm-detail-loading">
-      <div className="cm-spinner-lg" />
-      <p>Caricamento in corso…</p>
-    </div>
-  )
-
-  if (error) return (
-    <div className="cm-detail-error">
-      <p className="cm-error">{error}</p>
-      <button className="cm-btn-back" onClick={() => navigate('/')}>
-        ← Torna alla ricerca
-      </button>
-    </div>
-  )
-
-  const grouped = groupByTipo(manuale.documenti || [])
-
   return (
-    <div className="cm-app">
+    <>
+      {/* Header identico alle altre pagine */}
       <header className="cm-header">
         <img
           src={window.colmacData?.logoUrl || ''}
           alt="Colmac Italia"
           className="cm-header__logo"
-          onError={e => e.target.style.display = 'none'}
+          onError={e => (e.target.style.display = 'none')}
         />
         <div className="cm-header__right">
           <p className="cm-header__title">Documentazione Tecnica</p>
@@ -92,72 +84,101 @@ export default function DetailPage({ apiUrl }) {
       </header>
 
       <div className="cm-main">
-      <div className="cm-detail">
 
-      {/* Back */}
-      <button className="cm-btn-back" onClick={() => navigate('/')}>
-        ← Tutti i modelli
-      </button>
+        {/* Loading */}
+        {loading && (
+          <div className="cm-detail-loading">
+            <div className="cm-spinner-lg" />
+          </div>
+        )}
 
-      {/* Header modello */}
-      <div className="cm-detail__header">
-        <div>
-          <h1 className="cm-detail__name">{manuale.nome}</h1>
-          <code className="cm-detail__model-id">{manuale.model_id}</code>
-        </div>
-        <div className="cm-detail__badges">
-          {manuale.linea         && <span className="cm-badge cm-badge--linea">{manuale.linea}</span>}
-          {manuale.tipo_macchina && <span className="cm-badge cm-badge--tipo">{manuale.tipo_macchina}</span>}
-        </div>
-      </div>
+        {/* Errore */}
+        {!loading && error && (
+          <div className="cm-detail-error">
+            <p className="cm-error">{error}</p>
+            <button className="cm-btn-back" onClick={() => navigate('/')}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <polyline points="15 18 9 12 15 6" />
+              </svg>
+              Torna alla ricerca
+            </button>
+          </div>
+        )}
 
-      {/* Documenti */}
-      {Object.keys(grouped).length === 0 ? (
-        <p className="cm-detail__empty">Nessun documento disponibile per questo modello.</p>
-      ) : (
-        <div className="cm-detail__docs">
-          {Object.entries(grouped).map(([tipo, docs]) => (
-            <div key={tipo} className="cm-doc-section">
-              <h2 className="cm-doc-section__title">
-                {TIPO_LABEL[tipo] || tipo}
-              </h2>
-              <div className="cm-doc-section__grid">
-                {docs.map((doc, i) => (
-                  <a
-                    key={i}
-                    href={doc.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="cm-doc-card"
-                  >
-                    <div className="cm-doc-card__icon">
-                      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                        <polyline points="14 2 14 8 20 8"/>
-                      </svg>
-                    </div>
-                    <div className="cm-doc-card__info">
-                      <span className="cm-doc-card__lang">
-                        {LINGUA_LABEL[doc.lingua] || doc.lingua?.toUpperCase()}
-                      </span>
-                      <span className="cm-doc-card__filename">{doc.filename}</span>
-                    </div>
-                    <div className="cm-doc-card__download">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                        <polyline points="7 10 12 15 17 10"/>
-                        <line x1="12" y1="15" x2="12" y2="3"/>
-                      </svg>
-                    </div>
-                  </a>
-                ))}
+        {/* Contenuto */}
+        {!loading && manuale && (
+          <>
+            {/* Breadcrumb / back */}
+            <div className="cm-step-nav">
+              <button className="cm-btn-back" onClick={() => navigate(-1)}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <polyline points="15 18 9 12 15 6" />
+                </svg>
+                Indietro
+              </button>
+            </div>
+
+            {/* Header modello */}
+            <div className="cm-detail__header">
+              <div>
+                <h1 className="cm-detail__name">{manuale.nome}</h1>
+                <code className="cm-detail__model-id">{manuale.model_id}</code>
+              </div>
+              <div className="cm-detail__badges">
+                {manuale.linea         && <span className="cm-badge cm-badge--linea">{manuale.linea}</span>}
+                {manuale.tipo_macchina && <span className="cm-badge cm-badge--tipo">{manuale.tipo_macchina}</span>}
               </div>
             </div>
-          ))}
-        </div>
-      )}
+
+            {/* Documenti come card */}
+            {(!manuale.documenti || manuale.documenti.length === 0) ? (
+              <p className="cm-detail__empty">Nessun documento disponibile per questo modello.</p>
+            ) : (
+              <div className="cm-doc-cards-wrap">
+                <div className="cm-doc-cards-count">
+                  {manuale.documenti.length}{' '}
+                  {manuale.documenti.length === 1 ? 'documento disponibile' : 'documenti disponibili'}
+                </div>
+                <div className="cm-doc-cards-grid">
+                  {manuale.documenti.map((doc, i) => {
+                    const lingua = LINGUA_INFO[doc.lingua] || { flag: '🌐', label: doc.lingua?.toUpperCase() || '—' }
+                    const tipoLabel = TIPO_LABEL[doc.tipo] || doc.tipo || 'Documento'
+                    return (
+                      <a
+                        key={i}
+                        href={doc.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="cm-doc-tile"
+                      >
+                        <div className="cm-doc-tile__icon">
+                          <DocTypeIcon tipo={doc.tipo} />
+                        </div>
+                        <div className="cm-doc-tile__body">
+                          <span className="cm-doc-tile__tipo">{tipoLabel}</span>
+                          <span className="cm-doc-tile__lang">
+                            <span className="cm-doc-tile__flag">{lingua.flag}</span>
+                            {lingua.label}
+                          </span>
+                        </div>
+                        <div className="cm-doc-tile__footer">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                          </svg>
+                          Scarica PDF
+                        </div>
+                      </a>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
+          </>
+        )}
+
       </div>
-      </div>
-    </div>
+    </>
   )
 }
