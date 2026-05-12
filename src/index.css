@@ -322,8 +322,8 @@
 }
 
 .cm-linea-banner__img-wrap {
-  width: clamp(80px, 10vw, 160px);
-  height: clamp(50px, 6vw, 100px);
+  width: clamp(120px, 16vw, 240px);
+  height: clamp(72px, 10vw, 150px);
   border-radius: 4px;
   overflow: hidden;
   flex-shrink: 0;
