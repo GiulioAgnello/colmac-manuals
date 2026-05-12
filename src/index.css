@@ -263,6 +263,8 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
+  display: block;
 }
 .cm-line-tile__placeholder {
   display: flex;
@@ -286,6 +288,88 @@
 }
 .cm-line-tile__arrow {
   color: var(--cm-orange);
+}
+
+/* ================================================================
+   LINEA BANNER (sticky, visibile su tutti gli step della LineaPage)
+   ================================================================ */
+.cm-linea-banner {
+  background: var(--cm-black);
+  border-bottom: 3px solid var(--cm-orange);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 24px;
+  position: sticky;
+  top: 72px;
+  z-index: 90;
+}
+.cm-linea-banner__back {
+  background: none;
+  border: none;
+  color: #aaa;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  transition: color 0.15s;
+}
+.cm-linea-banner__back:hover { color: var(--cm-orange); }
+
+.cm-linea-banner__img-wrap {
+  width: 52px;
+  height: 32px;
+  border-radius: 4px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #2d2d2d;
+}
+.cm-linea-banner__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+.cm-linea-banner__img-placeholder {
+  width: 100%;
+  height: 100%;
+  background: #333;
+}
+.cm-linea-banner__info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.cm-linea-banner__eyebrow {
+  font-size: 9px;
+  font-weight: 700;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.cm-linea-banner__name {
+  font-size: 15px;
+  font-weight: 900;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.cm-linea-banner__lang {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.cm-linea-banner__lang-flag { font-size: 18px; }
+.cm-linea-banner__lang-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--cm-orange);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 /* ================================================================
