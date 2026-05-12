@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 
 const TIPO_LABEL = {
-  manuale: 'Manuale d\'uso',
+  manuale: "Manuale d'uso",
   esploso: 'Esploso',
 }
 
@@ -40,7 +40,6 @@ function DocTypeIcon({ tipo }) {
 export default function DetailPage({ apiUrl }) {
   const { modelId } = useParams()
   const navigate    = useNavigate()
-
   const [manuale, setManuale] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error,   setError]   = useState(null)
@@ -69,7 +68,6 @@ export default function DetailPage({ apiUrl }) {
 
   return (
     <>
-      {/* Header identico alle altre pagine */}
       <header className="cm-header">
         <img
           src={window.colmacData?.logoUrl || ''}
@@ -85,14 +83,12 @@ export default function DetailPage({ apiUrl }) {
 
       <div className="cm-main">
 
-        {/* Loading */}
         {loading && (
           <div className="cm-detail-loading">
             <div className="cm-spinner-lg" />
           </div>
         )}
 
-        {/* Errore */}
         {!loading && error && (
           <div className="cm-detail-error">
             <p className="cm-error">{error}</p>
@@ -105,10 +101,8 @@ export default function DetailPage({ apiUrl }) {
           </div>
         )}
 
-        {/* Contenuto */}
         {!loading && manuale && (
           <>
-            {/* Breadcrumb / back */}
             <div className="cm-step-nav">
               <button className="cm-btn-back" onClick={() => navigate(-1)}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -118,21 +112,23 @@ export default function DetailPage({ apiUrl }) {
               </button>
             </div>
 
-            {/* Header modello */}
             <div className="cm-detail__header">
               <div>
                 <h1 className="cm-detail__name">{manuale.nome}</h1>
                 <code className="cm-detail__model-id">{manuale.model_id}</code>
               </div>
               <div className="cm-detail__badges">
-                {manuale.linea         && <span className="cm-badge cm-badge--linea">{manuale.linea}</span>}
-                {manuale.tipo_macchina && <span className="cm-badge cm-badge--tipo">{manuale.tipo_macchina}</span>}
+                {manuale.linea && (
+                  <span className="cm-badge cm-badge--linea">{manuale.linea}</span>
+                )}
+                {manuale.tipo_macchina && (
+                  <span className="cm-badge cm-badge--tipo">{manuale.tipo_macchina}</span>
+                )}
               </div>
             </div>
 
-            {/* Documenti come card */}
             {(!manuale.documenti || manuale.documenti.length === 0) ? (
-              <p className="cm-detail__empty">Nessun documento disponibile per questo modello.</p>
+              <p className="cm-detail__empty">Nessun documento disponibile.</p>
             ) : (
               <div className="cm-doc-cards-wrap">
                 <div className="cm-doc-cards-count">
@@ -141,7 +137,7 @@ export default function DetailPage({ apiUrl }) {
                 </div>
                 <div className="cm-doc-cards-grid">
                   {manuale.documenti.map((doc, i) => {
-                    const lingua = LINGUA_INFO[doc.lingua] || { flag: '🌐', label: doc.lingua?.toUpperCase() || '—' }
+                    const lingua = LINGUA_INFO[doc.lingua] || { flag: '🌐', label: (doc.lingua || '').toUpperCase() }
                     const tipoLabel = TIPO_LABEL[doc.tipo] || doc.tipo || 'Documento'
                     return (
                       <a
