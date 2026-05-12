@@ -318,8 +318,8 @@
 .cm-linea-banner__back:hover { color: var(--cm-orange); }
 
 .cm-linea-banner__img-wrap {
-  width: 52px;
-  height: 32px;
+  width: 78px;
+  height: 48px;
   border-radius: 4px;
   overflow: hidden;
   flex-shrink: 0;
