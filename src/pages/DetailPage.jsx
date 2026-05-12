@@ -40,9 +40,10 @@ function DocTypeIcon({ tipo }) {
 export default function DetailPage({ apiUrl }) {
   const { modelId } = useParams()
   const navigate    = useNavigate()
-  const [manuale, setManuale] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [error,   setError]   = useState(null)
+  const [manuale,    setManuale]    = useState(null)
+  const [loading,    setLoading]    = useState(true)
+  const [error,      setError]      = useState(null)
+  const [lineaImage, setLineaImage] = useState(null)
 
   useEffect(() => {
     const doFetch = async () => {
@@ -65,6 +66,18 @@ export default function DetailPage({ apiUrl }) {
     }
     doFetch()
   }, [apiUrl, modelId])
+
+  // Carica immagine linea una volta noto manuale.linea
+  useEffect(() => {
+    if (!manuale?.linea) return
+    fetch(`/wp-json/wp/v2/colmac_linea?slug=${manuale.linea}`)
+      .then(r => r.json())
+      .then(data => {
+        if (data[0]?.meta?.colmac_linea_image)
+          setLineaImage(data[0].meta.colmac_linea_image)
+      })
+      .catch(() => {})
+  }, [manuale])
 
   return (
     <>
@@ -89,6 +102,12 @@ export default function DetailPage({ apiUrl }) {
               <polyline points="15 18 9 12 15 6" />
             </svg>
           </button>
+          <div className="cm-linea-banner__img-wrap">
+            {lineaImage
+              ? <img src={lineaImage} alt={manuale.linea} className="cm-linea-banner__img" />
+              : <div className="cm-linea-banner__img-placeholder" />
+            }
+          </div>
           <div className="cm-linea-banner__info">
             <span className="cm-linea-banner__eyebrow">Modello</span>
             <span className="cm-linea-banner__name">{manuale.model_id}</span>
