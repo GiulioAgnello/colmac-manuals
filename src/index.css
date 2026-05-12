@@ -345,21 +345,25 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  text-align: center;
 }
 .cm-linea-banner__eyebrow {
-  font-size: 9px;
+  font-size: clamp(9px, 1vw, 12px);
   font-weight: 700;
   color: #888;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
 }
 .cm-linea-banner__name {
-  font-size: 15px;
+  font-size: clamp(16px, 2.4vw, 32px);
   font-weight: 900;
   color: #fff;
   text-transform: uppercase;
   letter-spacing: 0.04em;
+  line-height: 1;
 }
 .cm-linea-banner__badges {
   display: flex;
