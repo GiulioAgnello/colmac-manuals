@@ -209,10 +209,7 @@ export default function SearchPage({ apiUrl }) {
   }, [step, selectedLinea, selectedLang]);
 
   const handleLineaClick = (linea) => {
-    setSelectedLinea(linea);
-    setResults([]);
-    setSearched(false);
-    setStep("lang");
+    navigate(`/linea/${linea}`);
   };
 
   const handleLangClick = (lang) => {
