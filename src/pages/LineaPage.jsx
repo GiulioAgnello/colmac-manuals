@@ -142,8 +142,9 @@ export default function LineaPage({ apiUrl }) {
     fetch(`/wp-json/wp/v2/colmac_linea?slug=${lineaId}`)
       .then((r) => r.json())
       .then((data) => {
-        if (data[0]?.name)  setLineaLabel(data[0].name);
-        if (data[0]?.meta?.colmac_linea_image) setLineaImage(data[0].meta.colmac_linea_image);
+        if (data[0]?.name) setLineaLabel(data[0].name);
+        if (data[0]?.meta?.colmac_linea_image)
+          setLineaImage(data[0].meta.colmac_linea_image);
       })
       .catch(() => {});
   }, [lineaId]);
@@ -204,17 +205,33 @@ export default function LineaPage({ apiUrl }) {
 
       {/* ── BANNER LINEA (sempre visibile) ── */}
       <div className="cm-linea-banner">
-        <button className="cm-linea-banner__back" onClick={goBack} aria-label="Indietro">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+        <button
+          className="cm-linea-banner__back"
+          onClick={goBack}
+          aria-label="Indietro"
+        >
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+          >
             <polyline points="15 18 9 12 15 6" />
           </svg>
         </button>
 
         <div className="cm-linea-banner__img-wrap">
-          {lineaImage
-            ? <img src={lineaImage} alt={lineaLabel} className="cm-linea-banner__img" />
-            : <div className="cm-linea-banner__img-placeholder" />
-          }
+          {lineaImage ? (
+            <img
+              src={lineaImage}
+              alt={lineaLabel}
+              className="cm-linea-banner__img"
+            />
+          ) : (
+            <div className="cm-linea-banner__img-placeholder" />
+          )}
         </div>
 
         <div className="cm-linea-banner__info">
@@ -224,14 +241,17 @@ export default function LineaPage({ apiUrl }) {
 
         {selectedLangObj && (
           <div className="cm-linea-banner__lang">
-            <span className="cm-linea-banner__lang-flag">{selectedLangObj.flag}</span>
-            <span className="cm-linea-banner__lang-label">{selectedLangObj.label}</span>
+            <span className="cm-linea-banner__lang-flag">
+              {selectedLangObj.flag}
+            </span>
+            <span className="cm-linea-banner__lang-label">
+              {selectedLangObj.label}
+            </span>
           </div>
         )}
       </div>
 
       <div className="cm-main">
-
         {/* ── STEP: LINGUA ── */}
         {step === "lang" && (
           <div className="cm-step-wrap">
@@ -283,15 +303,27 @@ export default function LineaPage({ apiUrl }) {
                         <DocTypeIcon tipo={item.documenti?.[0]?.tipo} />
                       </div>
                       <div className="cm-result-card__top">
-                        <span className="cm-result-card__model">{item.model_id}</span>
-                        <svg className="cm-result-card__arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <span className="cm-result-card__model">
+                          {item.model_id}
+                        </span>
+                        <svg
+                          className="cm-result-card__arrow"
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2.5"
+                        >
                           <polyline points="9 18 15 12 9 6" />
                         </svg>
                       </div>
                       <span className="cm-result-card__name">{item.nome}</span>
                       <div className="cm-result-card__badges">
                         {item.tipo_macchina && (
-                          <span className="cm-badge cm-badge--tipo">{item.tipo_macchina}</span>
+                          <span className="cm-badge cm-badge--tipo">
+                            {item.tipo_macchina}
+                          </span>
                         )}
                         <span className="cm-badge cm-badge--count">
                           {item.documenti?.length || 0} doc

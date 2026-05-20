@@ -6,7 +6,7 @@
 :root {
   --cm-orange: #f5a100;
   --cm-orange-dark: #d48900;
-  --cm-black: #1a1a1a;
+  --cm-black: #000000;
   --cm-dark: #2d2d2d;
   --cm-gray: #6b7280;
   --cm-gray-light: #f4f4f4;
@@ -103,8 +103,7 @@
 /* ================================================================
    SEARCH BAR
    ================================================================ */
-.cm-searchbar {
-}
+
 .cm-searchbar__inner {
   position: relative;
   display: flex;
@@ -296,7 +295,7 @@
    LINEA BANNER (sticky, visibile su tutti gli step della LineaPage)
    ================================================================ */
 .cm-linea-banner {
-  background: var(--cm-black);
+  background: white;
   border-bottom: 3px solid var(--cm-orange);
   display: flex;
   align-items: center;
@@ -358,7 +357,7 @@
 .cm-linea-banner__name {
   font-size: clamp(16px, 2.4vw, 32px);
   font-weight: 900;
-  color: #fff;
+  color: #f5a100;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   line-height: 1;
@@ -427,6 +426,7 @@
   gap: 12px;
 }
 .cm-lang-tile {
+  width: 100%;
   display: flex;
   align-items: center;
   gap: 14px;
@@ -599,8 +599,6 @@
 /* ================================================================
    DETAIL PAGE
    ================================================================ */
-.cm-detail {
-}
 
 .cm-detail__header {
   background: var(--cm-white);
@@ -791,6 +789,9 @@
    RESPONSIVE
    ================================================================ */
 @media (max-width: 640px) {
+  .cm-lang-grid {
+    grid-template-columns: 1fr;
+  }
   .cm-header {
     padding: 0 16px;
     height: 60px;
