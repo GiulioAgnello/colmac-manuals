@@ -233,21 +233,20 @@ export default function LineaPage({ apiUrl }) {
           </div>
         )}
       </div>
-      <button
-        className="cm-linea-banner__back"
-        onClick={goBack}
-        aria-label="Indietro"
-      >
+      <button className="cm-back-btn" onClick={goBack} aria-label="Indietro">
         <svg
-          width="16"
-          height="16"
+          width="20"
+          height="20"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
           strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         >
           <polyline points="15 18 9 12 15 6" />
         </svg>
+        indietro
       </button>
       <div className="cm-main">
         {/* ── STEP: LINGUA ── */}
