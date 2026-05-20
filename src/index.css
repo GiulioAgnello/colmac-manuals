@@ -386,6 +386,31 @@
 }
 
 /* ================================================================
+   BACK BUTTON (LineaPage)
+   ================================================================ */
+.cm-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--cm-white);
+  border: 2px solid var(--cm-border);
+  border-radius: var(--cm-radius);
+  padding: 14px 24px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--cm-gray);
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  transition: border-color 0.15s, color 0.15s;
+  margin: 16px 24px;
+}
+.cm-back-btn:hover {
+  border-color: var(--cm-orange);
+  color: var(--cm-orange);
+}
+
+/* ================================================================
    STEP HEADER (back + crumb)
    ================================================================ */
 .cm-step-wrap {
@@ -793,7 +818,6 @@
   }
   .cm-header {
     padding: 0 16px;
-    height: 60px;
   }
   .cm-header__logo {
     height: 36px;

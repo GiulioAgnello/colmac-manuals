@@ -97,11 +97,6 @@ export default function DetailPage({ apiUrl }) {
       {/* Banner modello — identico al cm-linea-banner */}
       {!loading && manuale && (
         <div className="cm-linea-banner">
-          <button className="cm-linea-banner__back" onClick={() => navigate(-1)} aria-label="Indietro">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <polyline points="15 18 9 12 15 6" />
-            </svg>
-          </button>
           <div className="cm-linea-banner__img-wrap">
             {lineaImage
               ? <img src={lineaImage} alt={manuale.linea} className="cm-linea-banner__img" />
@@ -122,6 +117,22 @@ export default function DetailPage({ apiUrl }) {
           </div>
         </div>
       )}
+
+      <button className="cm-back-btn" onClick={() => navigate(-1)}>
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <polyline points="15 18 9 12 15 6" />
+        </svg>
+        Indietro
+      </button>
 
       <div className="cm-main">
 
