@@ -51,6 +51,55 @@ class Colmac_Importer {
         'scheda_tecnica'      => 'Scheda Tecnica',
     ];
 
+    // Alias multilingua → chiave canonica (IT/EN/FR/ES)
+    const TIPO_ALIASES = [
+        // catalogo
+        'catalog'              => 'catalogo',
+        'catalogue'            => 'catalogo',
+        'catalogo'             => 'catalogo',
+
+        // libretto_assistenza
+        'manuale'              => 'libretto_assistenza',   // IT generico
+        'manuale_uso'          => 'libretto_assistenza',
+        'manuale_d_uso'        => 'libretto_assistenza',
+        'manuale_operatore'    => 'libretto_assistenza',
+        'service_manual'       => 'libretto_assistenza',
+        'workshop_manual'      => 'libretto_assistenza',
+        'manual'               => 'libretto_assistenza',   // EN/ES generico
+        'user_manual'          => 'libretto_assistenza',
+        'owner_manual'         => 'libretto_assistenza',
+        'owners_manual'        => 'libretto_assistenza',
+        'manuel'               => 'libretto_assistenza',   // FR generico
+        'manuel_entretien'     => 'libretto_assistenza',
+        'manuel_utilisateur'   => 'libretto_assistenza',
+        'livret_entretien'     => 'libretto_assistenza',
+        'manual_servicio'      => 'libretto_assistenza',
+        'manual_de_servicio'   => 'libretto_assistenza',
+        'manual_usuario'       => 'libretto_assistenza',
+
+        // esploso
+        'exploded_view'        => 'esploso',
+        'exploded'             => 'esploso',
+        'spare_parts'          => 'esploso',
+        'eclate'               => 'esploso',
+        'vue_eclatee'          => 'esploso',
+        'despiece'             => 'esploso',
+
+        // dichiarazione_ce
+        'ce_declaration'       => 'dichiarazione_ce',
+        'declaration_ce'       => 'dichiarazione_ce',
+        'declaracion_ce'       => 'dichiarazione_ce',
+        'ec_declaration'       => 'dichiarazione_ce',
+
+        // scheda_tecnica
+        'technical_sheet'      => 'scheda_tecnica',
+        'data_sheet'           => 'scheda_tecnica',
+        'spec_sheet'           => 'scheda_tecnica',
+        'datasheet'            => 'scheda_tecnica',
+        'fiche_technique'      => 'scheda_tecnica',
+        'ficha_tecnica'        => 'scheda_tecnica',
+    ];
+
     const LINGUA_LABELS = [
         'it' => 'Italiano', 'en' => 'English', 'fr' => 'Français',
         'de' => 'Deutsch',  'es' => 'Español', 'pt' => 'Português',
@@ -98,8 +147,12 @@ class Colmac_Importer {
                         <li><code>PROMIX-60__catalogo__it.pdf</code></li>
                     </ul>
                     <p style="margin-top:8px">
-                        <strong>Tipi documento validi:</strong>
+                        <strong>Tipi documento (IT):</strong>
                         catalogo, libretto_assistenza, esploso, dichiarazione_ce, scheda_tecnica<br>
+                        <strong>Alias IT:</strong> manuale, manuale_uso, manuale_operatore<br>
+                        <strong>Alias EN:</strong> catalog/catalogue, manual/user_manual, exploded_view, ce_declaration, data_sheet<br>
+                        <strong>Alias FR:</strong> catalogue, manuel/manuel_utilisateur, eclate, declaration_ce, fiche_technique<br>
+                        <strong>Alias ES:</strong> catalogo, manual_servicio/manual_usuario, despiece, declaracion_ce, ficha_tecnica<br>
                         <strong>Lingue valide:</strong> it, en, fr, de, es, pt
                     </p>
                 </div>
@@ -356,9 +409,13 @@ class Colmac_Importer {
         [ $model_id, $tipo, $lingua ] = array_map( 'strtolower', $parts );
         $model_id = strtoupper( $parts[0] ); // model_id sempre uppercase
 
+        // Normalizza alias multilingua → chiave canonica
+        $tipo = self::TIPO_ALIASES[ $tipo ] ?? $tipo;
+
         if ( ! array_key_exists( $tipo, self::TIPO_LABELS ) ) {
             return new WP_Error( 'bad_tipo',
-                "Tipo documento non valido: \"{$tipo}\". Validi: " . implode( ', ', array_keys( self::TIPO_LABELS ) )
+                "Tipo documento non valido: \"{$tipo}\". Validi (IT): " . implode( ', ', array_keys( self::TIPO_LABELS ) ) .
+                '. Alias (EN/FR/ES): ' . implode( ', ', array_keys( self::TIPO_ALIASES ) )
             );
         }
 

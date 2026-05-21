@@ -233,19 +233,6 @@ export default function SearchPage({ apiUrl }) {
 
   return (
     <>
-      {/* Header */}
-      <header className="cm-header">
-        <img
-          src={window.colmacData?.logoUrl || ""}
-          alt="Colmac Italia"
-          className="cm-header__logo"
-          onError={(e) => (e.target.style.display = "none")}
-        />
-        <div className="cm-header__right">
-          <p className="cm-header__title">Documentazione Tecnica</p>
-          <p className="cm-header__sub">Manuali · Libretti · Schede tecniche</p>
-        </div>
-      </header>
 
       <div className="cm-main">
         {/* Search sempre visibile */}

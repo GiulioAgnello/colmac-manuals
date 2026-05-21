@@ -190,18 +190,6 @@ export default function LineaPage({ apiUrl }) {
 
   return (
     <>
-      <header className="cm-header">
-        <img
-          src={window.colmacData?.logoUrl || ""}
-          alt="Colmac Italia"
-          className="cm-header__logo"
-          onError={(e) => (e.target.style.display = "none")}
-        />
-        <div className="cm-header__right">
-          <p className="cm-header__title">Documentazione Tecnica</p>
-          <p className="cm-header__sub">Manuali · Libretti · Schede tecniche</p>
-        </div>
-      </header>
 
       {/* ── BANNER LINEA (sempre visibile) ── */}
       <div className="cm-linea-banner">
