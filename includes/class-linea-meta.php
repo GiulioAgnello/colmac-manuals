@@ -35,7 +35,7 @@ class Colmac_Linea_Meta {
     // -------------------------------------------------------------------------
     public static function render_fields( WP_Term $term ) {
         $image_url = get_term_meta( $term->term_id, 'colmac_linea_image', true );
-        $app_url   = rtrim( home_url(), '/' ) . '/documentazione/#/linea/' . $term->slug;
+        $app_url   = self::get_app_base_url() . '/#/linea/' . $term->slug;
         wp_nonce_field( 'colmac_linea_meta_save', 'colmac_linea_meta_nonce' );
         ?>
         <tr class="form-field">
@@ -163,4 +163,22 @@ class Colmac_Linea_Meta {
         })(jQuery);
         JS;
     }
+    // -------------------------------------------------------------------------
+    // Helper — trova dinamicamente la pagina con lo shortcode [colmac_manuali]
+    // -------------------------------------------------------------------------
+    private static function get_app_base_url(): string {
+        global $wpdb;
+        $page_id = $wpdb->get_var(
+            "SELECT ID FROM {$wpdb->posts}
+             WHERE post_status = 'publish'
+               AND post_type   = 'page'
+               AND post_content LIKE '%colmac_manuali%'
+             LIMIT 1"
+        );
+        if ( $page_id ) {
+            return rtrim( get_permalink( (int) $page_id ), '/' );
+        }
+        return rtrim( home_url(), '/' );
+    }
+
 }

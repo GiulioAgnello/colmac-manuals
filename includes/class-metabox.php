@@ -53,6 +53,7 @@ class Colmac_Metabox {
         // Media uploader WP
         wp_enqueue_media();
 
+
         // JS inline per repeater + media picker
         wp_add_inline_script( 'jquery', self::get_inline_js() );
 
