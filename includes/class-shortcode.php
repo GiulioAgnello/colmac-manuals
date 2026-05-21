@@ -78,7 +78,7 @@ class Colmac_Shortcode {
             'apiUrl'  => esc_url( rest_url( 'colmac/v1/manuali' ) ),
             'nonce'   => wp_create_nonce( 'wp_rest' ),
             'siteUrl' => esc_url( get_site_url() ),
-            'logoUrl' => esc_url( COLMAC_MANUALS_URL . 'assets/logo.png' ),
+            'logoUrl' => esc_url( add_query_arg( 'v', filemtime( COLMAC_MANUALS_DIR . 'assets/logo.png' ) ?: COLMAC_MANUALS_VERSION, COLMAC_MANUALS_URL . 'assets/logo.png' ) ),
         ] );
     }
 }

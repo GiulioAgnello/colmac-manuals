@@ -854,6 +854,8 @@
     display: none;
   }
   .cm-linea-banner__img-wrap {
-    display: none;
+    width: 64px;
+    height: 48px;
+    flex-shrink: 0;
   }
 }
