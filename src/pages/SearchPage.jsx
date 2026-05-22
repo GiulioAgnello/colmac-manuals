@@ -401,22 +401,35 @@ export default function SearchPage({ apiUrl }) {
   );
 }
 
+// Estrae il primo numero trovato nel model_id (es. "BETOMIX-350RS" → 350)
+function extractModelNumber(modelId) {
+  const match = (modelId || '').match(/(\d+)/);
+  return match ? parseInt(match[1], 10) : 0;
+}
+
 function ResultsGrid({ results, navigate }) {
+  const sorted = [...results].sort(
+    (a, b) => extractModelNumber(b.model_id) - extractModelNumber(a.model_id)
+  );
+
   return (
     <div className="cm-results-wrap">
       <div className="cm-results-count">
-        {results.length}{" "}
-        {results.length === 1 ? "modello trovato" : "modelli trovati"}
+        {sorted.length}{" "}
+        {sorted.length === 1 ? "modello trovato" : "modelli trovati"}
       </div>
       <div className="cm-results">
-        {results.map((item) => (
+        {sorted.map((item) => (
           <div
             key={item.id}
             className="cm-result-card"
             onClick={() => navigate(`/m/${item.model_id}`)}
           >
             <div className="cm-result-card__icon-wrap">
-              <DocTypeIcon tipo={item.documenti?.[0]?.tipo} />
+              {item.photo
+                ? <img src={item.photo} alt={item.nome} className="cm-result-card__photo" />
+                : <DocTypeIcon tipo={item.documenti?.[0]?.tipo} />
+              }
             </div>
             <div className="cm-result-card__top">
               <span className="cm-result-card__model">{item.model_id}</span>

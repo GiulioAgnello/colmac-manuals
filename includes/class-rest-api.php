@@ -191,6 +191,7 @@ class Colmac_REST_API {
             'tipo_macchina'=> $macchina_terms && ! is_wp_error( $macchina_terms )
                                 ? $macchina_terms[0]->name : '',
             'documenti'    => $documenti,
+            'photo'        => get_the_post_thumbnail_url( $post->ID, 'medium' ) ?: null,
         ];
     }
 
