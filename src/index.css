@@ -570,6 +570,12 @@
   width: 64px;
   height: 64px;
 }
+.cm-result-card__photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 4px;
+}
 
 .cm-result-card__top {
   display: flex;
