@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import { createPortal } from "react-dom";
 import { useParams, useNavigate } from "react-router-dom";
 import SearchBar from "../components/SearchBar";
 import EmptyState from "../components/EmptyState";
@@ -137,6 +138,28 @@ export default function LineaPage({ apiUrl }) {
   const [sortAsc, setSortAsc] = useState(true);
   const [lineaLabel, setLineaLabel] = useState(lineaId);
   const [lineaImage, setLineaImage] = useState(null);
+  const [scrolled, setScrolled] = useState(false);
+  const [bannerHeight, setBannerHeight] = useState(0);
+  const bannerRef = useRef(null);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 60);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  // Misura altezza banner per il spacer — solo quando l'immagine carica,
+  // NON su ogni scroll (evita race condition con la transizione CSS 0.3s)
+  useEffect(() => {
+    if (!bannerRef.current) return;
+    // Aspetta che la transizione sia finita prima di misurare
+    const t = setTimeout(() => {
+      if (bannerRef.current) {
+        setBannerHeight(bannerRef.current.offsetHeight);
+      }
+    }, 50);
+    return () => clearTimeout(t);
+  }, [lineaImage]);
 
   // Recupera nome + immagine della linea dalla REST API
   useEffect(() => {
@@ -192,36 +215,30 @@ export default function LineaPage({ apiUrl }) {
   return (
     <>
 
-      {/* ── BANNER LINEA (sempre visibile) ── */}
-      <div className="cm-linea-banner">
-        <div className="cm-linea-banner__img-wrap">
-          {lineaImage ? (
-            <img
-              src={lineaImage}
-              alt={lineaLabel}
-              className="cm-linea-banner__img"
-            />
-          ) : (
-            <div className="cm-linea-banner__img-placeholder" />
-          )}
-        </div>
+      {/* Spacer che compensa l'altezza del banner fixed */}
+      <div style={{ height: bannerHeight }} aria-hidden="true" />
 
-        <div className="cm-linea-banner__info">
-          <span className="cm-linea-banner__eyebrow">Linea</span>
-          <span className="cm-linea-banner__name">{lineaLabel}</span>
-        </div>
-
-        {selectedLangObj && (
-          <div className="cm-linea-banner__lang">
-            <span className="cm-linea-banner__lang-flag">
-              {selectedLangObj.flag}
-            </span>
-            <span className="cm-linea-banner__lang-label">
-              {selectedLangObj.label}
-            </span>
+      {/* ── BANNER LINEA — renderizzato via portal nel body per evitare
+           problemi di scroll container su mobile ── */}
+      {createPortal(
+        <div
+          ref={bannerRef}
+          className={`cm-linea-banner${scrolled ? ' cm-linea-banner--shrunk' : ''}`}
+        >
+          <img
+            src={window.colmacData?.logoUrl || '/logo-colmac.png'}
+            alt="Colmac"
+            className="cm-linea-banner__logo"
+            onError={(e) => (e.target.style.display = 'none')}
+          />
+          <div className="cm-linea-banner__media">
+            {lineaImage ? (
+              <img src={lineaImage} alt={lineaLabel} className="cm-linea-banner__img" />
+            ) : null}
           </div>
-        )}
-      </div>
+        </div>,
+        document.body
+      )}
       <button className="cm-back-btn" onClick={goBack} aria-label="Indietro">
         <svg
           width="20"
@@ -305,7 +322,10 @@ export default function LineaPage({ apiUrl }) {
                       onClick={() => navigate(`/m/${item.model_id}`)}
                     >
                       <div className="cm-result-card__icon-wrap">
-                        <DocTypeIcon tipo={item.documenti?.[0]?.tipo} />
+                        {item.photo
+                          ? <img src={item.photo} alt={item.nome} style={{width:'100%',height:'120px',objectFit:'contain',borderRadius:'4px',display:'block',background:'#fafafa'}} />
+                          : <DocTypeIcon tipo={item.documenti?.[0]?.tipo} />
+                        }
                       </div>
                       <div className="cm-result-card__top">
                         <span className="cm-result-card__model">
@@ -323,7 +343,6 @@ export default function LineaPage({ apiUrl }) {
                           <polyline points="9 18 15 12 9 6" />
                         </svg>
                       </div>
-                      <span className="cm-result-card__name">{item.nome}</span>
                       <div className="cm-result-card__badges">
                         {item.tipo_macchina && (
                           <span className="cm-badge cm-badge--tipo">

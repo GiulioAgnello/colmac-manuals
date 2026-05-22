@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { createPortal } from 'react-dom'
 
 const TIPO_LABEL = {
   manuale: "Manuale d'uso",
@@ -82,29 +83,26 @@ export default function DetailPage({ apiUrl }) {
   return (
     <>
 
-      {/* Banner modello — identico al cm-linea-banner */}
-      {!loading && manuale && (
+      {/* Banner modello — fixed via portal, logo a sinistra + immagine linea */}
+      {createPortal(
         <div className="cm-linea-banner">
-          <div className="cm-linea-banner__img-wrap">
-            {lineaImage
-              ? <img src={lineaImage} alt={manuale.linea} className="cm-linea-banner__img" />
-              : <div className="cm-linea-banner__img-placeholder" />
-            }
-          </div>
-          <div className="cm-linea-banner__info">
-            <span className="cm-linea-banner__eyebrow">Modello</span>
-            <span className="cm-linea-banner__name">{manuale.model_id}</span>
-          </div>
-          <div className="cm-linea-banner__badges">
-            {manuale.linea && (
-              <span className="cm-badge cm-badge--linea">{manuale.linea}</span>
-            )}
-            {manuale.tipo_macchina && (
-              <span className="cm-badge cm-badge--tipo">{manuale.tipo_macchina}</span>
+          <img
+            src={window.colmacData?.logoUrl || '/logo-colmac.png'}
+            alt="Colmac"
+            className="cm-linea-banner__logo"
+            onError={(e) => (e.target.style.display = 'none')}
+          />
+          <div className="cm-linea-banner__media">
+            {lineaImage && (
+              <img src={lineaImage} alt={manuale?.linea || ''} className="cm-linea-banner__img" />
             )}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
+
+      {/* Spacer per compensare il banner fisso */}
+      <div style={{ height: 100 }} aria-hidden="true" />
 
       <button className="cm-back-btn" onClick={() => navigate(-1)}>
         <svg

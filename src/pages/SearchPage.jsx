@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import SearchBar from "../components/SearchBar";
 import EmptyState from "../components/EmptyState";
+import Header from "../components/Header";
 
 const DEBOUNCE_MS = 350;
 
@@ -233,7 +234,7 @@ export default function SearchPage({ apiUrl }) {
 
   return (
     <>
-
+      <Header />
       <div className="cm-main">
         {/* Search sempre visibile */}
         <div className="cm-hero">
@@ -443,7 +444,7 @@ function ResultsGrid({ results, navigate }) {
           >
             <div className="cm-result-card__icon-wrap">
               {item.photo
-                ? <img src={item.photo} alt={item.nome} className="cm-result-card__photo" />
+                ? <img src={item.photo} alt={item.nome} style={{width:'100%',height:'120px',objectFit:'contain',borderRadius:'4px',display:'block',background:'#fafafa'}} />
                 : <DocTypeIcon tipo={item.documenti?.[0]?.tipo} />
               }
             </div>
@@ -461,7 +462,6 @@ function ResultsGrid({ results, navigate }) {
                 <polyline points="9 18 15 12 9 6" />
               </svg>
             </div>
-            <span className="cm-result-card__name">{item.nome}</span>
             <div className="cm-result-card__badges">
               {item.linea && (
                 <span className="cm-badge cm-badge--linea">{item.linea}</span>
