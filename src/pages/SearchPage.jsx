@@ -408,15 +408,31 @@ function extractModelNumber(modelId) {
 }
 
 function ResultsGrid({ results, navigate }) {
-  const sorted = [...results].sort(
-    (a, b) => extractModelNumber(b.model_id) - extractModelNumber(a.model_id)
-  );
+  const [sortAsc, setSortAsc] = React.useState(true);
+
+  const sorted = [...results].sort((a, b) => {
+    const diff = extractModelNumber(a.model_id) - extractModelNumber(b.model_id);
+    return sortAsc ? diff : -diff;
+  });
 
   return (
     <div className="cm-results-wrap">
       <div className="cm-results-count">
         {sorted.length}{" "}
         {sorted.length === 1 ? "modello trovato" : "modelli trovati"}
+        <button
+          className="cm-sort-toggle"
+          onClick={() => setSortAsc(s => !s)}
+          title={sortAsc ? "Ordine: piccolo → grande. Clicca per invertire" : "Ordine: grande → piccolo. Clicca per invertire"}
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            {sortAsc
+              ? <polyline points="12 5 12 19 5 12" />   /* freccia su */
+              : <polyline points="12 19 12 5 19 12" />  /* freccia giù */
+            }
+          </svg>
+          {sortAsc ? "piccolo → grande" : "grande → piccolo"}
+        </button>
       </div>
       <div className="cm-results">
         {sorted.map((item) => (

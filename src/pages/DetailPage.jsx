@@ -160,10 +160,10 @@ export default function DetailPage({ apiUrl }) {
                     return (
                       <a
                         key={i}
-                        href={doc.url}
+                        href={doc.url || undefined}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="cm-doc-tile"
+                        className={`cm-doc-tile${!doc.url ? ' cm-doc-tile--no-url' : ''}`}
                       >
                         <div className="cm-doc-tile__icon">
                           <DocTypeIcon tipo={doc.tipo} />

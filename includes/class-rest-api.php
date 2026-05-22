@@ -191,8 +191,20 @@ class Colmac_REST_API {
             'tipo_macchina'=> $macchina_terms && ! is_wp_error( $macchina_terms )
                                 ? $macchina_terms[0]->name : '',
             'documenti'    => $documenti,
-            'photo'        => get_the_post_thumbnail_url( $post->ID, 'medium' ) ?: null,
+            'photo'        => self::get_model_photo( $post->ID ),
         ];
+    }
+
+    // -------------------------------------------------------------------------
+    // Foto del modello: meta custom → fallback featured image
+    // -------------------------------------------------------------------------
+    private static function get_model_photo( int $post_id ): ?string {
+        $photo_id = (int) get_post_meta( $post_id, '_colmac_model_photo_id', true );
+        if ( $photo_id ) {
+            $url = wp_get_attachment_image_url( $photo_id, 'medium' );
+            if ( $url ) return $url;
+        }
+        return get_the_post_thumbnail_url( $post_id, 'medium' ) ?: null;
     }
 
     // -------------------------------------------------------------------------

@@ -67,8 +67,10 @@ class Colmac_Metabox {
     public static function render_dati( WP_Post $post ) {
         wp_nonce_field( 'colmac_save_meta', 'colmac_nonce' );
 
-        $model_id = get_post_meta( $post->ID, '_colmac_model_id', true );
-        $nome     = get_post_meta( $post->ID, '_colmac_nome_modello', true );
+        $model_id  = get_post_meta( $post->ID, '_colmac_model_id', true );
+        $nome      = get_post_meta( $post->ID, '_colmac_nome_modello', true );
+        $photo_id  = (int) get_post_meta( $post->ID, '_colmac_model_photo_id', true );
+        $photo_url = $photo_id ? wp_get_attachment_image_url( $photo_id, 'medium' ) : '';
         ?>
         <div class="colmac-fields-row">
             <div class="colmac-field">
@@ -96,6 +98,25 @@ class Colmac_Metabox {
                     required
                 />
                 <p class="description">Nome leggibile mostrato ai clienti.</p>
+            </div>
+        </div>
+
+        <div class="colmac-field colmac-field--photo">
+            <label><strong>Foto del modello</strong></label>
+            <div class="colmac-photo-wrap">
+                <div class="colmac-photo-preview" id="colmac-photo-preview">
+                    <?php if ( $photo_url ) : ?>
+                        <img src="<?php echo esc_url( $photo_url ); ?>" alt="Foto modello" />
+                    <?php else : ?>
+                        <span class="colmac-photo-empty">Nessuna foto selezionata</span>
+                    <?php endif; ?>
+                </div>
+                <input type="hidden" id="colmac_model_photo_id" name="colmac_model_photo_id" value="<?php echo esc_attr( $photo_id ?: '' ); ?>" />
+                <div class="colmac-photo-actions">
+                    <button type="button" class="button" id="colmac-btn-pick-photo">🖼 Scegli foto</button>
+                    <button type="button" class="button" id="colmac-btn-remove-photo"<?php echo $photo_url ? '' : ' style="display:none"'; ?>>✕ Rimuovi foto</button>
+                </div>
+                <p class="description">Immagine mostrata nella card del modello sul portale. Consigliato: JPG/PNG, 800×600 px.</p>
             </div>
         </div>
         <?php
@@ -208,6 +229,16 @@ class Colmac_Metabox {
             update_post_meta( $post_id, '_colmac_nome_modello', sanitize_text_field( $_POST['colmac_nome_modello'] ) );
         }
 
+        // Foto modello
+        if ( isset( $_POST['colmac_model_photo_id'] ) ) {
+            $photo_id = absint( $_POST['colmac_model_photo_id'] );
+            if ( $photo_id ) {
+                update_post_meta( $post_id, '_colmac_model_photo_id', $photo_id );
+            } else {
+                delete_post_meta( $post_id, '_colmac_model_photo_id' );
+            }
+        }
+
         // Documenti
         $documenti = [];
         if ( isset( $_POST['colmac_documenti'] ) && is_array( $_POST['colmac_documenti'] ) ) {
@@ -287,6 +318,30 @@ class Colmac_Metabox {
             if ($.fn.sortable) {
                 docList.sortable({ handle: '.colmac-doc-handle', axis: 'y' });
             }
+
+            // ---- Media picker FOTO MODELLO ----
+            $('#colmac-btn-pick-photo').on('click', function() {
+                var frame = wp.media({
+                    title: 'Seleziona foto modello',
+                    button: { text: 'Usa questa foto' },
+                    library: { type: 'image' },
+                    multiple: false
+                });
+                frame.on('select', function() {
+                    var att = frame.state().get('selection').first().toJSON();
+                    var url = att.sizes && att.sizes.medium ? att.sizes.medium.url : att.url;
+                    $('#colmac_model_photo_id').val(att.id);
+                    $('#colmac-photo-preview').html('<img src="' + url + '" alt="Foto modello" />');
+                    $('#colmac-btn-remove-photo').show();
+                });
+                frame.open();
+            });
+
+            $('#colmac-btn-remove-photo').on('click', function() {
+                $('#colmac_model_photo_id').val('');
+                $('#colmac-photo-preview').html('<span class="colmac-photo-empty">Nessuna foto selezionata</span>');
+                $(this).hide();
+            });
         });
         JS;
     }
@@ -320,6 +375,19 @@ class Colmac_Metabox {
         }
         .colmac-btn-remove:hover { color: #b32d2e; }
         #colmac-add-doc { margin-top: 10px; }
+
+        .colmac-field--photo { margin-top: 16px; border-top: 1px solid #eee; padding-top: 16px; }
+        .colmac-field--photo > label { display: block; margin-bottom: 10px; }
+        .colmac-photo-wrap { display: flex; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+        .colmac-photo-preview {
+            width: 160px; height: 120px; border: 2px dashed #ddd; border-radius: 4px;
+            display: flex; align-items: center; justify-content: center;
+            background: #fafafa; overflow: hidden; flex-shrink: 0;
+        }
+        .colmac-photo-preview img { width: 100%; height: 100%; object-fit: cover; }
+        .colmac-photo-empty { color: #999; font-size: 12px; font-style: italic; text-align: center; padding: 8px; }
+        .colmac-photo-actions { display: flex; flex-direction: column; gap: 8px; justify-content: center; }
+        .colmac-photo-wrap .description { flex-basis: 100%; margin: 4px 0 0; }
         ';
     }
 }

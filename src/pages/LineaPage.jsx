@@ -134,6 +134,7 @@ export default function LineaPage({ apiUrl }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [searched, setSearched] = useState(false);
+  const [sortAsc, setSortAsc] = useState(true);
   const [lineaLabel, setLineaLabel] = useState(lineaId);
   const [lineaImage, setLineaImage] = useState(null);
 
@@ -274,11 +275,30 @@ export default function LineaPage({ apiUrl }) {
             {results.length > 0 && (
               <div className="cm-results-wrap">
                 <div className="cm-results-count">
-                  {results.length}{" "}
+                  {[...results].sort((a,b) => {
+                    const n = s => ((s||'').match(/(\d+)/)||[0,0])[1]*1;
+                    return sortAsc ? n(a.model_id)-n(b.model_id) : n(b.model_id)-n(a.model_id);
+                  }).length}{" "}
                   {results.length === 1 ? "modello trovato" : "modelli trovati"}
+                  <button
+                    className="cm-sort-toggle"
+                    onClick={() => setSortAsc(s => !s)}
+                    title={sortAsc ? "Piccolo → grande. Clicca per invertire" : "Grande → piccolo. Clicca per invertire"}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      {sortAsc
+                        ? <polyline points="12 5 12 19 5 12" />
+                        : <polyline points="12 19 12 5 19 12" />
+                      }
+                    </svg>
+                    {sortAsc ? "piccolo → grande" : "grande → piccolo"}
+                  </button>
                 </div>
                 <div className="cm-results">
-                  {results.map((item) => (
+                  {[...results].sort((a, b) => {
+                    const n = s => ((s||'').match(/(\d+)/)||[0,0])[1]*1;
+                    return sortAsc ? n(a.model_id)-n(b.model_id) : n(b.model_id)-n(a.model_id);
+                  }).map((item) => (
                     <div
                       key={item.id}
                       className="cm-result-card"

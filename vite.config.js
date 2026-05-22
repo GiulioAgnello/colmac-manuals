@@ -4,7 +4,7 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   build: {
-    // Output in dist/ — committato nel plugin WP
+    // Output in dist/ — da uploadare sul server insieme al plugin
     outDir: 'dist',
     // Unico bundle JS senza hash nel nome (WP lo versiona tramite filemtime)
     rollupOptions: {
