@@ -322,9 +322,17 @@
   height: 28px;
 }
 
+/* containerBackAndLinea */
+.containerBackLine {
+  background: var(--cm-white);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
 /* Contenitore immagine linea — cresce, centra l'immagine */
 .cm-linea-banner__media {
-  flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;

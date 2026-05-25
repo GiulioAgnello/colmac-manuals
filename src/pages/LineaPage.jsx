@@ -144,8 +144,8 @@ export default function LineaPage({ apiUrl }) {
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60);
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   // Misura altezza banner per il spacer — solo quando l'immagine carica,
@@ -214,7 +214,6 @@ export default function LineaPage({ apiUrl }) {
 
   return (
     <>
-
       {/* Spacer che compensa l'altezza del banner fixed */}
       <div style={{ height: bannerHeight }} aria-hidden="true" />
 
@@ -223,37 +222,44 @@ export default function LineaPage({ apiUrl }) {
       {createPortal(
         <div
           ref={bannerRef}
-          className={`cm-linea-banner${scrolled ? ' cm-linea-banner--shrunk' : ''}`}
+          className={`cm-linea-banner${scrolled ? " cm-linea-banner--shrunk" : ""}`}
         >
           <img
-            src={window.colmacData?.logoUrl || '/logo-colmac.png'}
+            src={window.colmacData?.logoUrl || "/logo-colmac.png"}
             alt="Colmac"
             className="cm-linea-banner__logo"
-            onError={(e) => (e.target.style.display = 'none')}
+            onError={(e) => (e.target.style.display = "none")}
           />
-          <div className="cm-linea-banner__media">
-            {lineaImage ? (
-              <img src={lineaImage} alt={lineaLabel} className="cm-linea-banner__img" />
-            ) : null}
-          </div>
         </div>,
-        document.body
+        document.body,
       )}
-      <button className="cm-back-btn" onClick={goBack} aria-label="Indietro">
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <polyline points="15 18 9 12 15 6" />
-        </svg>
-        indietro
-      </button>
+      <div className="containerBackLine">
+        <button className="cm-back-btn" onClick={goBack} aria-label="Indietro">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
+          indietro
+        </button>
+        <div className="cm-linea-banner__media">
+          {lineaImage ? (
+            <img
+              src={lineaImage}
+              alt={lineaLabel}
+              className="cm-linea-banner__img"
+            />
+          ) : null}
+        </div>
+      </div>
+
       <div className="cm-main">
         {/* ── STEP: LINGUA ── */}
         {step === "lang" && (
@@ -292,69 +298,105 @@ export default function LineaPage({ apiUrl }) {
             {results.length > 0 && (
               <div className="cm-results-wrap">
                 <div className="cm-results-count">
-                  {[...results].sort((a,b) => {
-                    const n = s => ((s||'').match(/(\d+)/)||[0,0])[1]*1;
-                    return sortAsc ? n(a.model_id)-n(b.model_id) : n(b.model_id)-n(a.model_id);
-                  }).length}{" "}
+                  {
+                    [...results].sort((a, b) => {
+                      const n = (s) =>
+                        ((s || "").match(/(\d+)/) || [0, 0])[1] * 1;
+                      return sortAsc
+                        ? n(a.model_id) - n(b.model_id)
+                        : n(b.model_id) - n(a.model_id);
+                    }).length
+                  }{" "}
                   {results.length === 1 ? "modello trovato" : "modelli trovati"}
                   <button
                     className="cm-sort-toggle"
-                    onClick={() => setSortAsc(s => !s)}
-                    title={sortAsc ? "Piccolo → grande. Clicca per invertire" : "Grande → piccolo. Clicca per invertire"}
+                    onClick={() => setSortAsc((s) => !s)}
+                    title={
+                      sortAsc
+                        ? "Piccolo → grande. Clicca per invertire"
+                        : "Grande → piccolo. Clicca per invertire"
+                    }
                   >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                      {sortAsc
-                        ? <polyline points="12 5 12 19 5 12" />
-                        : <polyline points="12 19 12 5 19 12" />
-                      }
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                    >
+                      {sortAsc ? (
+                        <polyline points="12 5 12 19 5 12" />
+                      ) : (
+                        <polyline points="12 19 12 5 19 12" />
+                      )}
                     </svg>
                     {sortAsc ? "piccolo → grande" : "grande → piccolo"}
                   </button>
                 </div>
                 <div className="cm-results">
-                  {[...results].sort((a, b) => {
-                    const n = s => ((s||'').match(/(\d+)/)||[0,0])[1]*1;
-                    return sortAsc ? n(a.model_id)-n(b.model_id) : n(b.model_id)-n(a.model_id);
-                  }).map((item) => (
-                    <div
-                      key={item.id}
-                      className="cm-result-card"
-                      onClick={() => navigate(`/m/${item.model_id}`)}
-                    >
-                      <div className="cm-result-card__icon-wrap">
-                        {item.photo
-                          ? <img src={item.photo} alt={item.nome} style={{width:'100%',height:'120px',objectFit:'contain',borderRadius:'4px',display:'block',background:'#fafafa'}} />
-                          : <DocTypeIcon tipo={item.documenti?.[0]?.tipo} />
+                  {[...results]
+                    .sort((a, b) => {
+                      const n = (s) =>
+                        ((s || "").match(/(\d+)/) || [0, 0])[1] * 1;
+                      return sortAsc
+                        ? n(a.model_id) - n(b.model_id)
+                        : n(b.model_id) - n(a.model_id);
+                    })
+                    .map((item) => (
+                      <div
+                        key={item.id}
+                        className="cm-result-card"
+                        onClick={() =>
+                          navigate(`/m/${item.model_id}?lang=${selectedLang}`)
                         }
-                      </div>
-                      <div className="cm-result-card__top">
-                        <span className="cm-result-card__model">
-                          {item.model_id}
-                        </span>
-                        <svg
-                          className="cm-result-card__arrow"
-                          width="16"
-                          height="16"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2.5"
-                        >
-                          <polyline points="9 18 15 12 9 6" />
-                        </svg>
-                      </div>
-                      <div className="cm-result-card__badges">
-                        {item.tipo_macchina && (
-                          <span className="cm-badge cm-badge--tipo">
-                            {item.tipo_macchina}
+                      >
+                        <div className="cm-result-card__icon-wrap">
+                          {item.photo ? (
+                            <img
+                              src={item.photo}
+                              alt={item.nome}
+                              style={{
+                                width: "100%",
+                                height: "120px",
+                                objectFit: "contain",
+                                borderRadius: "4px",
+                                display: "block",
+                                background: "#fafafa",
+                              }}
+                            />
+                          ) : (
+                            <DocTypeIcon tipo={item.documenti?.[0]?.tipo} />
+                          )}
+                        </div>
+                        <div className="cm-result-card__top">
+                          <span className="cm-result-card__model">
+                            {item.model_id}
                           </span>
-                        )}
-                        <span className="cm-badge cm-badge--count">
-                          {item.documenti?.length || 0} doc
-                        </span>
+                          <svg
+                            className="cm-result-card__arrow"
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2.5"
+                          >
+                            <polyline points="9 18 15 12 9 6" />
+                          </svg>
+                        </div>
+                        <div className="cm-result-card__badges">
+                          {item.tipo_macchina && (
+                            <span className="cm-badge cm-badge--tipo">
+                              {item.tipo_macchina}
+                            </span>
+                          )}
+                          <span className="cm-badge cm-badge--count">
+                            {item.documenti?.length || 0} doc
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
                 </div>
               </div>
             )}
