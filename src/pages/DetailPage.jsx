@@ -180,7 +180,18 @@ export default function DetailPage({ apiUrl }) {
       <Header />
 
       <div className="containerBackLine">
-        <button className="cm-back-btn" onClick={() => navigate(-1)}>
+        <button
+          className="cm-back-btn"
+          onClick={() => {
+            if (manuale?.linea && langFilter) {
+              navigate(`/linea/${manuale.linea}?lang=${langFilter}`);
+            } else if (manuale?.linea) {
+              navigate(`/linea/${manuale.linea}`);
+            } else {
+              navigate(-1);
+            }
+          }}
+        >
           <svg
             width="20"
             height="20"

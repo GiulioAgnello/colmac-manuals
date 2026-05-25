@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { createPortal } from "react-dom";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import SearchBar from "../components/SearchBar";
 import EmptyState from "../components/EmptyState";
 import Header from "../components/Header";
@@ -129,9 +129,11 @@ function DocTypeIcon({ tipo }) {
 export default function LineaPage({ apiUrl }) {
   const { lineaId } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const initialLang = searchParams.get("lang");
 
-  const [step, setStep] = useState("lang"); // lang | results
-  const [selectedLang, setSelectedLang] = useState(null);
+  const [step, setStep] = useState(initialLang ? "results" : "lang");
+  const [selectedLang, setSelectedLang] = useState(initialLang);
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -193,6 +195,10 @@ export default function LineaPage({ apiUrl }) {
     },
     [apiUrl, lineaId],
   );
+
+  useEffect(() => {
+    if (initialLang) fetchResults(initialLang);
+  }, [fetchResults]);
 
   const handleLangClick = (lang) => {
     setSelectedLang(lang);
@@ -295,8 +301,8 @@ export default function LineaPage({ apiUrl }) {
                     onClick={() => setSortAsc((s) => !s)}
                     title={
                       sortAsc
-                        ? "Piccolo → grande. Clicca per invertire"
-                        : "Grande → piccolo. Clicca per invertire"
+                        ? "Crescente. Clicca per invertire"
+                        : "Decrescente. Clicca per invertire"
                     }
                   >
                     <svg
@@ -313,7 +319,7 @@ export default function LineaPage({ apiUrl }) {
                         <polyline points="12 19 12 5 19 12" />
                       )}
                     </svg>
-                    {sortAsc ? "piccolo → grande" : "grande → piccolo"}
+                    {sortAsc ? "Crescente" : "Decrescente"}
                   </button>
                 </div>
                 <div className="cm-results">
@@ -340,7 +346,7 @@ export default function LineaPage({ apiUrl }) {
                               alt={item.nome}
                               style={{
                                 width: "100%",
-                                height: "120px",
+                                height: "100%",
                                 objectFit: "contain",
                                 borderRadius: "4px",
                                 display: "block",

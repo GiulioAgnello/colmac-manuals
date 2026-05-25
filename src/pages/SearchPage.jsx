@@ -133,12 +133,12 @@ export default function SearchPage({ apiUrl }) {
   const navigate = useNavigate();
 
   // Wizard
-  const [step,          setStep]          = useState("home");
+  const [step, setStep] = useState("home");
   const [selectedLinea, setSelectedLinea] = useState(null);
-  const [selectedLang,  setSelectedLang]  = useState(null);
+  const [selectedLang, setSelectedLang] = useState(null);
 
   // Linee dinamiche da WP
-  const [lines,        setLines]        = useState([]);
+  const [lines, setLines] = useState([]);
   const [linesLoading, setLinesLoading] = useState(true);
 
   useEffect(() => {
@@ -147,11 +147,11 @@ export default function SearchPage({ apiUrl }) {
       .then((data) => {
         setLines(
           data.map((t) => ({
-            id:    t.slug,
+            id: t.slug,
             label: t.name,
             linea: t.slug,
             image: t.meta?.colmac_linea_image || null,
-          }))
+          })),
         );
       })
       .catch(() => {})
@@ -257,9 +257,11 @@ export default function SearchPage({ apiUrl }) {
           <div className="cm-lines-wrap">
             <p className="cm-lines-label">Oppure scegli la tua linea</p>
             <div className="cm-lines-grid">
-              {linesLoading
-                ? <p style={{color:'#aaa',fontSize:'13px'}}>Caricamento linee…</p>
-                : null}
+              {linesLoading ? (
+                <p style={{ color: "#aaa", fontSize: "13px" }}>
+                  Caricamento linee…
+                </p>
+              ) : null}
               {lines.map((line) => (
                 <button
                   key={line.id}
@@ -404,7 +406,7 @@ export default function SearchPage({ apiUrl }) {
 
 // Estrae il primo numero trovato nel model_id (es. "BETOMIX-350RS" → 350)
 function extractModelNumber(modelId) {
-  const match = (modelId || '').match(/(\d+)/);
+  const match = (modelId || "").match(/(\d+)/);
   return match ? parseInt(match[1], 10) : 0;
 }
 
@@ -412,7 +414,8 @@ function ResultsGrid({ results, navigate }) {
   const [sortAsc, setSortAsc] = React.useState(true);
 
   const sorted = [...results].sort((a, b) => {
-    const diff = extractModelNumber(a.model_id) - extractModelNumber(b.model_id);
+    const diff =
+      extractModelNumber(a.model_id) - extractModelNumber(b.model_id);
     return sortAsc ? diff : -diff;
   });
 
@@ -423,16 +426,30 @@ function ResultsGrid({ results, navigate }) {
         {sorted.length === 1 ? "modello trovato" : "modelli trovati"}
         <button
           className="cm-sort-toggle"
-          onClick={() => setSortAsc(s => !s)}
-          title={sortAsc ? "Ordine: piccolo → grande. Clicca per invertire" : "Ordine: grande → piccolo. Clicca per invertire"}
+          onClick={() => setSortAsc((s) => !s)}
+          title={
+            sortAsc
+              ? "Ordine: Crescente. Clicca per invertire"
+              : "Ordine: Decrescente. Clicca per invertire"
+          }
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            {sortAsc
-              ? <polyline points="12 5 12 19 5 12" />   /* freccia su */
-              : <polyline points="12 19 12 5 19 12" />  /* freccia giù */
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+          >
+            {
+              sortAsc ? (
+                <polyline points="12 5 12 19 5 12" /> /* freccia su */
+              ) : (
+                <polyline points="12 19 12 5 19 12" />
+              ) /* freccia giù */
             }
           </svg>
-          {sortAsc ? "piccolo → grande" : "grande → piccolo"}
+          {sortAsc ? "Crescente" : "Decrescente"}
         </button>
       </div>
       <div className="cm-results">
@@ -443,10 +460,22 @@ function ResultsGrid({ results, navigate }) {
             onClick={() => navigate(`/m/${item.model_id}`)}
           >
             <div className="cm-result-card__icon-wrap">
-              {item.photo
-                ? <img src={item.photo} alt={item.nome} style={{width:'100%',height:'120px',objectFit:'contain',borderRadius:'4px',display:'block',background:'#fafafa'}} />
-                : <DocTypeIcon tipo={item.documenti?.[0]?.tipo} />
-              }
+              {item.photo ? (
+                <img
+                  src={item.photo}
+                  alt={item.nome}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "contain",
+                    borderRadius: "4px",
+                    display: "block",
+                    background: "#fafafa",
+                  }}
+                />
+              ) : (
+                <DocTypeIcon tipo={item.documenti?.[0]?.tipo} />
+              )}
             </div>
             <div className="cm-result-card__top">
               <span className="cm-result-card__model">{item.model_id}</span>
