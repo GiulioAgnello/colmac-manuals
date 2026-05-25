@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { createPortal } from "react-dom";
-
+import Header from "../components/Header";
 const TIPO_LABEL = {
   manuale: "Manuale d'uso",
   esploso: "Esploso",
@@ -177,21 +177,8 @@ export default function DetailPage({ apiUrl }) {
 
   return (
     <>
-      {/* Banner modello — fixed via portal, logo a sinistra + immagine linea */}
-      {createPortal(
-        <div className="cm-linea-banner">
-          <img
-            src={window.colmacData?.logoUrl || "/logo-colmac.png"}
-            alt="Colmac"
-            className="cm-linea-banner__logo"
-            onError={(e) => (e.target.style.display = "none")}
-          />
-        </div>,
-        document.body,
-      )}
+      <Header />
 
-      {/* Spacer per compensare il banner fisso */}
-      <div style={{ height: 100 }} aria-hidden="true" />
       <div className="containerBackLine">
         <button className="cm-back-btn" onClick={() => navigate(-1)}>
           <svg
@@ -206,7 +193,6 @@ export default function DetailPage({ apiUrl }) {
           >
             <polyline points="15 18 9 12 15 6" />
           </svg>
-          Indietro
         </button>
         <div className="cm-linea-banner__media">
           {lineaImage && (

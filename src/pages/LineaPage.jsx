@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { useParams, useNavigate } from "react-router-dom";
 import SearchBar from "../components/SearchBar";
 import EmptyState from "../components/EmptyState";
+import Header from "../components/Header";
 
 const LANGS = [
   { code: "it", label: "Italiano", flag: "🇮🇹" },
@@ -214,25 +215,7 @@ export default function LineaPage({ apiUrl }) {
 
   return (
     <>
-      {/* Spacer che compensa l'altezza del banner fixed */}
-      <div style={{ height: bannerHeight }} aria-hidden="true" />
-
-      {/* ── BANNER LINEA — renderizzato via portal nel body per evitare
-           problemi di scroll container su mobile ── */}
-      {createPortal(
-        <div
-          ref={bannerRef}
-          className={`cm-linea-banner${scrolled ? " cm-linea-banner--shrunk" : ""}`}
-        >
-          <img
-            src={window.colmacData?.logoUrl || "/logo-colmac.png"}
-            alt="Colmac"
-            className="cm-linea-banner__logo"
-            onError={(e) => (e.target.style.display = "none")}
-          />
-        </div>,
-        document.body,
-      )}
+      <Header />
       <div className="containerBackLine">
         <button className="cm-back-btn" onClick={goBack} aria-label="Indietro">
           <svg
@@ -247,7 +230,6 @@ export default function LineaPage({ apiUrl }) {
           >
             <polyline points="15 18 9 12 15 6" />
           </svg>
-          indietro
         </button>
         <div className="cm-linea-banner__media">
           {lineaImage ? (
