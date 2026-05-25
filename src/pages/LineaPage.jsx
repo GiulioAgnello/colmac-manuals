@@ -367,16 +367,6 @@ export default function LineaPage({ apiUrl }) {
                             <polyline points="9 18 15 12 9 6" />
                           </svg>
                         </div>
-                        <div className="cm-result-card__badges">
-                          {item.tipo_macchina && (
-                            <span className="cm-badge cm-badge--tipo">
-                              {item.tipo_macchina}
-                            </span>
-                          )}
-                          <span className="cm-badge cm-badge--count">
-                            {item.documenti?.length || 0} doc
-                          </span>
-                        </div>
                       </div>
                     ))}
                 </div>

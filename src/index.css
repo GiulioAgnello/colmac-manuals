@@ -224,11 +224,14 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
   margin: 0 0 12px;
+  padding-left: 4px;
 }
 .cm-lines-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
+  gap: 4px;
+  padding-left: 4px;
+  padding-right: 4px;
 }
 .cm-line-tile {
   display: flex;
@@ -243,6 +246,7 @@
   box-shadow: var(--cm-shadow);
   overflow: hidden;
   text-align: left;
+  margin-bottom: 10px;
 }
 .cm-line-tile:hover {
   box-shadow: var(--cm-shadow-md);
@@ -683,11 +687,14 @@
   letter-spacing: 0.08em;
   color: var(--cm-gray);
   margin-bottom: 14px;
+  padding-left: 4px;
 }
 .cm-doc-cards-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 14px;
+  padding-left: 4px;
+  padding-right: 4px;
 }
 .cm-doc-tile {
   display: flex;
@@ -841,8 +848,8 @@
   }
   .cm-results {
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 12px;
-    padding: 16px;
+    gap: 4px;
+    padding: 4px;
   }
   .cm-detail__header {
     flex-direction: column;
