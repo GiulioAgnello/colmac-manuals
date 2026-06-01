@@ -1,17 +1,8 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { createPortal } from "react-dom";
-import { useParams, useNavigate, useSearchParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import SearchBar from "../components/SearchBar";
 import EmptyState from "../components/EmptyState";
 import Header from "../components/Header";
-
-const LANGS = [
-  { code: "it", label: "Italiano", flag: "🇮🇹" },
-  { code: "fr", label: "Français", flag: "🇫🇷" },
-  { code: "en", label: "English", flag: "🇬🇧" },
-  { code: "es", label: "Español", flag: "🇪🇸" },
-  { code: "pt", label: "Português", flag: "🇵🇹" },
-];
 
 function DocTypeIcon({ tipo }) {
   if (tipo === "esploso") {
@@ -130,11 +121,7 @@ function DocTypeIcon({ tipo }) {
 export default function LineaPage({ apiUrl }) {
   const { lineaId } = useParams();
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const initialLang = searchParams.get("lang");
 
-  const [step, setStep] = useState(initialLang ? "results" : "lang");
-  const [selectedLang, setSelectedLang] = useState(initialLang);
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -177,54 +164,32 @@ export default function LineaPage({ apiUrl }) {
       .catch(() => {});
   }, [lineaId]);
 
-  const fetchResults = useCallback(
-    async (lang) => {
-      setLoading(true);
-      setError(null);
-      try {
-        const params = new URLSearchParams({ linea: lineaId, lang });
-        const res = await fetch(`${apiUrl}?${params.toString()}`);
-        if (!res.ok) throw new Error();
-        const data = await res.json();
-        setResults(data);
-        setSearched(true);
-      } catch {
-        setError("Impossibile caricare i risultati. Riprova più tardi.");
-      } finally {
-        setLoading(false);
-      }
-    },
-    [apiUrl, lineaId],
-  );
+  const fetchResults = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const params = new URLSearchParams({ linea: lineaId });
+      const res = await fetch(`${apiUrl}?${params.toString()}`);
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      setResults(data);
+      setSearched(true);
+    } catch {
+      setError("Impossibile caricare i risultati. Riprova più tardi.");
+    } finally {
+      setLoading(false);
+    }
+  }, [apiUrl, lineaId]);
 
   useEffect(() => {
-    if (initialLang) fetchResults(initialLang);
+    fetchResults();
   }, [fetchResults]);
-
-  const handleLangClick = (lang) => {
-    setSelectedLang(lang);
-    setStep("results");
-    fetchResults(lang);
-  };
-
-  const goBack = () => {
-    if (step === "results") {
-      setStep("lang");
-      setSelectedLang(null);
-      setResults([]);
-      setSearched(false);
-    } else {
-      navigate("/");
-    }
-  };
-
-  const selectedLangObj = LANGS.find((l) => l.code === selectedLang);
 
   return (
     <>
       <Header />
       <div className="containerBackLine">
-        <button className="cm-back-btn" onClick={goBack} aria-label="Indietro">
+        <button className="cm-back-btn" onClick={() => navigate("/")} aria-label="Indietro">
           <svg
             width="20"
             height="20"
@@ -250,136 +215,110 @@ export default function LineaPage({ apiUrl }) {
       </div>
 
       <div className="cm-main">
-        {/* ── STEP: LINGUA ── */}
-        {step === "lang" && (
-          <div className="cm-step-wrap">
-            <p className="cm-step-title">Seleziona la lingua</p>
-            <div className="cm-lang-grid">
-              {LANGS.map((lang) => (
-                <button
-                  key={lang.code}
-                  className="cm-lang-tile"
-                  onClick={() => handleLangClick(lang.code)}
-                >
-                  <span className="cm-lang-tile__flag">{lang.flag}</span>
-                  <span className="cm-lang-tile__label">{lang.label}</span>
-                </button>
-              ))}
-            </div>
+        {error && <p className="cm-error">{error}</p>}
+
+        {loading && (
+          <div className="cm-detail-loading">
+            <div className="cm-spinner-lg" />
           </div>
         )}
 
-        {/* ── STEP: RISULTATI ── */}
-        {step === "results" && (
-          <>
-            {error && <p className="cm-error">{error}</p>}
+        {!loading && searched && results.length === 0 && !error && (
+          <EmptyState />
+        )}
 
-            {loading && (
-              <div className="cm-detail-loading">
-                <div className="cm-spinner-lg" />
-              </div>
-            )}
-
-            {!loading && searched && results.length === 0 && !error && (
-              <EmptyState />
-            )}
-
-            {results.length > 0 && (
-              <div className="cm-results-wrap">
-                <div className="cm-results-count">
-                  {
-                    [...results].sort((a, b) => {
-                      const n = (s) =>
-                        ((s || "").match(/(\d+)/) || [0, 0])[1] * 1;
-                      return sortAsc
-                        ? n(a.model_id) - n(b.model_id)
-                        : n(b.model_id) - n(a.model_id);
-                    }).length
-                  }{" "}
-                  {results.length === 1 ? "modello trovato" : "modelli trovati"}
-                  <button
-                    className="cm-sort-toggle"
-                    onClick={() => setSortAsc((s) => !s)}
-                    title={
-                      sortAsc
-                        ? "Crescente. Clicca per invertire"
-                        : "Decrescente. Clicca per invertire"
-                    }
+        {results.length > 0 && (
+          <div className="cm-results-wrap">
+            <div className="cm-results-count">
+              {
+                [...results].sort((a, b) => {
+                  const n = (s) =>
+                    ((s || "").match(/(\d+)/) || [0, 0])[1] * 1;
+                  return sortAsc
+                    ? n(a.model_id) - n(b.model_id)
+                    : n(b.model_id) - n(a.model_id);
+                }).length
+              }{" "}
+              {results.length === 1 ? "modello trovato" : "modelli trovati"}
+              <button
+                className="cm-sort-toggle"
+                onClick={() => setSortAsc((s) => !s)}
+                title={
+                  sortAsc
+                    ? "Crescente. Clicca per invertire"
+                    : "Decrescente. Clicca per invertire"
+                }
+              >
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                >
+                  {sortAsc ? (
+                    <polyline points="12 5 12 19 5 12" />
+                  ) : (
+                    <polyline points="12 19 12 5 19 12" />
+                  )}
+                </svg>
+                {sortAsc ? "Crescente" : "Decrescente"}
+              </button>
+            </div>
+            <div className="cm-results">
+              {[...results]
+                .sort((a, b) => {
+                  const n = (s) =>
+                    ((s || "").match(/(\d+)/) || [0, 0])[1] * 1;
+                  return sortAsc
+                    ? n(a.model_id) - n(b.model_id)
+                    : n(b.model_id) - n(a.model_id);
+                })
+                .map((item) => (
+                  <div
+                    key={item.id}
+                    className="cm-result-card"
+                    onClick={() => navigate(`/m/${item.model_id}`)}
                   >
-                    <svg
-                      width="14"
-                      height="14"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2.5"
-                    >
-                      {sortAsc ? (
-                        <polyline points="12 5 12 19 5 12" />
+                    <div className="cm-result-card__icon-wrap">
+                      {item.photo ? (
+                        <img
+                          src={item.photo}
+                          alt={item.nome}
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "contain",
+                            borderRadius: "4px",
+                            display: "block",
+                            background: "#fafafa",
+                          }}
+                        />
                       ) : (
-                        <polyline points="12 19 12 5 19 12" />
+                        <DocTypeIcon tipo={item.documenti?.[0]?.tipo} />
                       )}
-                    </svg>
-                    {sortAsc ? "Crescente" : "Decrescente"}
-                  </button>
-                </div>
-                <div className="cm-results">
-                  {[...results]
-                    .sort((a, b) => {
-                      const n = (s) =>
-                        ((s || "").match(/(\d+)/) || [0, 0])[1] * 1;
-                      return sortAsc
-                        ? n(a.model_id) - n(b.model_id)
-                        : n(b.model_id) - n(a.model_id);
-                    })
-                    .map((item) => (
-                      <div
-                        key={item.id}
-                        className="cm-result-card"
-                        onClick={() =>
-                          navigate(`/m/${item.model_id}?lang=${selectedLang}`)
-                        }
+                    </div>
+                    <div className="cm-result-card__top">
+                      <span className="cm-result-card__model">
+                        {item.model_id}
+                      </span>
+                      <svg
+                        className="cm-result-card__arrow"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
                       >
-                        <div className="cm-result-card__icon-wrap">
-                          {item.photo ? (
-                            <img
-                              src={item.photo}
-                              alt={item.nome}
-                              style={{
-                                width: "100%",
-                                height: "100%",
-                                objectFit: "contain",
-                                borderRadius: "4px",
-                                display: "block",
-                                background: "#fafafa",
-                              }}
-                            />
-                          ) : (
-                            <DocTypeIcon tipo={item.documenti?.[0]?.tipo} />
-                          )}
-                        </div>
-                        <div className="cm-result-card__top">
-                          <span className="cm-result-card__model">
-                            {item.model_id}
-                          </span>
-                          <svg
-                            className="cm-result-card__arrow"
-                            width="16"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2.5"
-                          >
-                            <polyline points="9 18 15 12 9 6" />
-                          </svg>
-                        </div>
-                      </div>
-                    ))}
-                </div>
-              </div>
-            )}
-          </>
+                        <polyline points="9 18 15 12 9 6" />
+                      </svg>
+                    </div>
+                  </div>
+                ))}
+            </div>
+          </div>
         )}
       </div>
     </>

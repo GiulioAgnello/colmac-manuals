@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import { createPortal } from "react-dom";
 import Header from "../components/Header";
+
+const LANGS = [
+  { code: "it", label: "Italiano", flag: "🇮🇹" },
+  { code: "fr", label: "Français", flag: "🇫🇷" },
+  { code: "en", label: "English", flag: "🇬🇧" },
+  { code: "es", label: "Español", flag: "🇪🇸" },
+  { code: "pt", label: "Português", flag: "🇵🇹" },
+];
+
 const TIPO_LABEL = {
   manuale: "Manuale d'uso",
   esploso: "Esploso",
@@ -132,7 +140,11 @@ export default function DetailPage({ apiUrl }) {
   const { modelId } = useParams();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const langFilter = searchParams.get("lang"); // es. 'it', 'en', 'fr', 'es' — null se non passato
+  const initialLang = searchParams.get("lang");
+
+  const [step, setStep] = useState(initialLang ? "docs" : "lang");
+  const [selectedLang, setSelectedLang] = useState(initialLang);
+
   const [manuale, setManuale] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -183,8 +195,8 @@ export default function DetailPage({ apiUrl }) {
         <button
           className="cm-back-btn"
           onClick={() => {
-            if (manuale?.linea && langFilter) {
-              navigate(`/linea/${manuale.linea}?lang=${langFilter}`);
+            if (step === "docs") {
+              setStep("lang");
             } else if (manuale?.linea) {
               navigate(`/linea/${manuale.linea}`);
             } else {
@@ -242,12 +254,35 @@ export default function DetailPage({ apiUrl }) {
           </div>
         )}
 
-        {!loading && manuale && (
+        {/* ── STEP: LINGUA ── */}
+        {!loading && manuale && step === "lang" && (
+          <div className="cm-step-wrap">
+            <p className="cm-step-title">Seleziona la lingua</p>
+            <div className="cm-lang-grid">
+              {LANGS.map((lang) => (
+                <button
+                  key={lang.code}
+                  className="cm-lang-tile"
+                  onClick={() => {
+                    setSelectedLang(lang.code);
+                    setStep("docs");
+                  }}
+                >
+                  <span className="cm-lang-tile__flag">{lang.flag}</span>
+                  <span className="cm-lang-tile__label">{lang.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ── STEP: DOCUMENTI ── */}
+        {!loading && manuale && step === "docs" && (
           <>
             {(() => {
-              const docs = langFilter
+              const docs = selectedLang
                 ? (manuale.documenti || []).filter(
-                    (d) => d.lingua === langFilter,
+                    (d) => d.lingua === selectedLang,
                   )
                 : manuale.documenti || [];
 
