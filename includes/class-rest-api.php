@@ -88,6 +88,7 @@ class Colmac_REST_API {
         $tipo_doc      = $request->get_param( 'tipo_doc' );
         $lang          = $request->get_param( 'lang' );
 
+
         // --- costruzione WP_Query ---
         $args = [
             'post_type'      => 'colmac_manuale',
@@ -134,6 +135,16 @@ class Colmac_REST_API {
 
         $results = [];
         foreach ( $query->posts as $post ) {
+            // Guardrail: non restituire mai post non pubblicati,
+            // indipendentemente da come la query li abbia inclusi.
+            if ( 'publish' !== $post->post_status ) {
+                continue;
+            }
+
+            // Escludi manuali temporaneamente in pausa.
+            if ( '1' === get_post_meta( $post->ID, '_colmac_paused', true ) ) {
+                continue;
+            }
             $item = self::format_post( $post, $tipo_doc, $lang );
             // Se filtri su tipo_doc o lang, escludi manuale se nessun doc passa il filtro
             if ( ( ! empty( $tipo_doc ) || ! empty( $lang ) ) && empty( $item['documenti'] ) ) {

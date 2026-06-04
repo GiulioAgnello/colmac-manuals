@@ -71,6 +71,25 @@ class Colmac_Metabox {
         $nome      = get_post_meta( $post->ID, '_colmac_nome_modello', true );
         $photo_id  = (int) get_post_meta( $post->ID, '_colmac_model_photo_id', true );
         $photo_url = $photo_id ? wp_get_attachment_image_url( $photo_id, 'medium' ) : '';
+        $paused    = get_post_meta( $post->ID, '_colmac_paused', true ) === '1';
+        ?>
+        <div class="colmac-pause-banner<?php echo $paused ? ' is-paused' : ''; ?>">
+            <label class="colmac-pause-label">
+                <input
+                    type="checkbox"
+                    name="colmac_paused"
+                    value="1"
+                    <?php checked( $paused ); ?>
+                    id="colmac_paused"
+                />
+                <span class="colmac-pause-switch"></span>
+                <span class="colmac-pause-text">
+                    <?php echo $paused ? '⏸ Manuale in pausa — non visibile sul portale' : '▶ Manuale attivo'; ?>
+                </span>
+            </label>
+            <p class="description">Usa questa opzione per nascondere temporaneamente il manuale dal portale senza cestinarlo.</p>
+        </div>
+        <?php
         ?>
         <div class="colmac-fields-row">
             <div class="colmac-field">
@@ -221,6 +240,9 @@ class Colmac_Metabox {
         if ( $post->post_type !== 'colmac_manuale' ) return;
         if ( ! current_user_can( 'edit_post', $post_id ) ) return;
 
+        // Pausa
+        update_post_meta( $post_id, '_colmac_paused', isset( $_POST['colmac_paused'] ) ? '1' : '0' );
+
         // model_id e nome_modello
         if ( isset( $_POST['colmac_model_id'] ) ) {
             update_post_meta( $post_id, '_colmac_model_id', sanitize_text_field( $_POST['colmac_model_id'] ) );
@@ -264,6 +286,19 @@ class Colmac_Metabox {
     private static function get_inline_js(): string {
         return <<<'JS'
         jQuery(function($) {
+            // ---- Toggle pausa ----
+            $('#colmac_paused').on('change', function() {
+                var banner = $('.colmac-pause-banner');
+                var text   = $('.colmac-pause-text');
+                if ($(this).is(':checked')) {
+                    banner.addClass('is-paused');
+                    text.text('⏸ Manuale in pausa — non visibile sul portale');
+                } else {
+                    banner.removeClass('is-paused');
+                    text.text('▶ Manuale attivo');
+                }
+            });
+
             var docList  = $('#colmac-docs-list');
             var template = $('#colmac-doc-template').html();
             var index    = docList.find('.colmac-doc-row').length;
@@ -388,6 +423,33 @@ class Colmac_Metabox {
         .colmac-photo-empty { color: #999; font-size: 12px; font-style: italic; text-align: center; padding: 8px; }
         .colmac-photo-actions { display: flex; flex-direction: column; gap: 8px; justify-content: center; }
         .colmac-photo-wrap .description { flex-basis: 100%; margin: 4px 0 0; }
+
+        /* Pausa toggle */
+        .colmac-pause-banner {
+            display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+            padding: 10px 14px; margin-bottom: 16px; border-radius: 4px;
+            background: #f0f6fc; border: 1px solid #c3d9f0;
+        }
+        .colmac-pause-banner.is-paused {
+            background: #fff3cd; border-color: #f0ad4e;
+        }
+        .colmac-pause-label {
+            display: flex; align-items: center; gap: 10px; cursor: pointer; margin: 0;
+        }
+        .colmac-pause-label input[type="checkbox"] { display: none; }
+        .colmac-pause-switch {
+            width: 42px; height: 24px; border-radius: 12px; background: #ccc;
+            position: relative; flex-shrink: 0; transition: background .2s;
+        }
+        .colmac-pause-switch::after {
+            content: ""; position: absolute; top: 3px; left: 3px;
+            width: 18px; height: 18px; border-radius: 50%; background: #fff;
+            transition: left .2s; box-shadow: 0 1px 3px rgba(0,0,0,.2);
+        }
+        .colmac-pause-label input:checked ~ .colmac-pause-switch { background: #f0ad4e; }
+        .colmac-pause-label input:checked ~ .colmac-pause-switch::after { left: 21px; }
+        .colmac-pause-text { font-weight: 600; font-size: 13px; }
+        .colmac-pause-banner .description { margin: 0; flex-basis: 100%; }
         ';
     }
 }
