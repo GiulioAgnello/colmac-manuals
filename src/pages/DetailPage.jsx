@@ -11,9 +11,48 @@ const LANGS = [
 ];
 
 const TIPO_LABEL = {
-  manuale: "Manuale d'uso",
-  esploso: "Esploso",
+  manuale: {
+    it: "Manuale d'uso",
+    fr: "Manuel d'utilisation",
+    en: "User manual",
+    es: "Manual de uso",
+    pt: "Manual de uso",
+  },
+  esploso: {
+    it: "Esploso",
+    fr: "Vue éclatée",
+    en: "Exploded view",
+    es: "Despiece",
+    pt: "Vista explodida",
+  },
 };
+
+// Etichetta del tipo documento nella lingua del documento stesso,
+// con fallback a italiano e infine alla chiave grezza.
+function tipoLabel(tipo, lingua) {
+  const byLang = TIPO_LABEL[tipo];
+  if (!byLang) return tipo || "Documento";
+  return byLang[lingua] || byLang.it || tipo;
+}
+
+// Stringhe dell'interfaccia, una voce per lingua (fallback IT).
+const UI = {
+  documento:  { it: "documento",  fr: "document",    en: "document",   es: "documento",  pt: "documento" },
+  documenti:  { it: "documenti",  fr: "documents",   en: "documents",  es: "documentos", pt: "documentos" },
+  scarica:    { it: "Scarica",    fr: "Télécharger", en: "Download",   es: "Descargar",  pt: "Baixar" },
+  nessunDoc:  {
+    it: "Nessun documento disponibile.",
+    fr: "Aucun document disponible.",
+    en: "No documents available.",
+    es: "Ningún documento disponible.",
+    pt: "Nenhum documento disponível.",
+  },
+};
+
+function t(key, lingua) {
+  const entry = UI[key] || {};
+  return entry[lingua] || entry.it || key;
+}
 
 const LINGUA_INFO = {
   it: { flag: "🇮🇹", label: "Italiano" },
@@ -186,10 +225,13 @@ export default function DetailPage({ apiUrl }) {
                   )
                 : manuale.documenti || [];
 
+              // Lingua per le scritte UI: quella selezionata, altrimenti IT.
+              const uiLang = selectedLang || "it";
+
               if (docs.length === 0)
                 return (
                   <p className="cm-detail__empty">
-                    Nessun documento disponibile.
+                    {t("nessunDoc", uiLang)}
                   </p>
                 );
 
@@ -207,7 +249,9 @@ export default function DetailPage({ apiUrl }) {
                     )}
                     <span className="cm-doc-folder__count">
                       {docs.length}{" "}
-                      {docs.length === 1 ? "documento" : "documenti"}
+                      {docs.length === 1
+                        ? t("documento", uiLang)
+                        : t("documenti", uiLang)}
                     </span>
                   </div>
                   <div className="cm-doc-folder__list">
@@ -216,8 +260,7 @@ export default function DetailPage({ apiUrl }) {
                         flag: "🌐",
                         label: (doc.lingua || "").toUpperCase(),
                       };
-                      const tipoLabel =
-                        TIPO_LABEL[doc.tipo] || doc.tipo || "Documento";
+                      const tipoLbl = tipoLabel(doc.tipo, doc.lingua);
                       return (
                         <a
                           key={i}
@@ -230,7 +273,7 @@ export default function DetailPage({ apiUrl }) {
                             <FileRowIcon tipo={doc.tipo} />
                           </div>
                           <div className="cm-doc-row__info">
-                            <span className="cm-doc-row__tipo">{tipoLabel}</span>
+                            <span className="cm-doc-row__tipo">{tipoLbl}</span>
                             {!selectedLang && (
                               <span className="cm-doc-row__lang">
                                 <span className="cm-doc-row__flag">{lingua.flag}</span>
@@ -253,7 +296,7 @@ export default function DetailPage({ apiUrl }) {
                               <polyline points="7 10 12 15 17 10" />
                               <line x1="12" y1="15" x2="12" y2="3" />
                             </svg>
-                            <span>Scarica</span>
+                            <span>{t("scarica", doc.lingua)}</span>
                           </div>
                         </a>
                       );
